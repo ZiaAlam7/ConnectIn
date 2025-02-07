@@ -6,22 +6,20 @@ import React from 'react';
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast"
 import axios from 'axios';
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 
 
 const SignupForm = () => {
 
     const { toast } = useToast()
-    // const router = useRouter();
+    const router = useRouter();
 
     const [formData, setFormData] = useState({
         email: "",
         password: "",
-        confirmPassword: "",
     });
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,21 +27,9 @@ const SignupForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if(!passwordRegex.test(formData.password)){
-            toast({
-                description: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number."
-              })
-            return;
-        }
-        if (formData.password !== formData.confirmPassword) {
-            toast({
-                description: "Password do not match"
-              })
-            return;
-        }
         
         try {
-            const response = await axios.post('api/auth/register', {
+            const response= await axios.post('api/auth/login', {
                 email: formData.email,
                 password: formData.password
             });
@@ -51,16 +37,15 @@ const SignupForm = () => {
             let data = response.data;
             toast({description: data.message})
 
-            // if(data.success){
-            //     router.push('/home');
-            // }
+            if(data.success){
+             router.push('/home');
+                 }
             
 
-        } catch (response: any) {
-            toast({description: response.response.data.error})
+        } catch (error: any) {
+            toast({description: error.response?.data?.error || 'Something went wrong' })
         }
 
-        console.log("Form submitted", formData);
     };
 
     return (
@@ -69,9 +54,9 @@ const SignupForm = () => {
             <Image src={logo} alt="logo" width={180}/>
         </div>
         <div className="bg-[#F4F2F0] h-[92vh] flex flex-col justify-center items-center">
-            <h1 className="text-4xl mb-8 text-black font-sans font-thin">Make the most of your professional life</h1>
+            <h1 className="text-4xl mb-8 text-black font-sans font-thin">Welcome Back</h1>
             <div className="max-w-sm  p-6 bg-white shadow-lg rounded-lg">
-                <h2 className="text-2xl font-bold mb-7 text-center text-black">Join ConnectIn</h2>
+                <h2 className="text-3xl font-bold mb-8  text-black">Sign in</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="email"
@@ -91,25 +76,16 @@ const SignupForm = () => {
                         className="w-full text-gray-600  p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
                         required
                     />
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className="w-full p-2 border text-gray-600  rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-                        required
-                    />
-                    <p className="text-xs text-center pt-3 text-gray-400 ">By clicking Agree & Join or Continue, you agree to the ConnectIn User Agreement, Privacy Policy, and Cookie Policy.</p>
+                    {/* <p className="text-xs text-center pt-3 text-gray-400 ">By clicking Agree & Join or Continue, you agree to the ConnectIn User Agreement, Privacy Policy, and Cookie Policy.</p> */}
                     <button
                         type="submit"
                         className="w-full text-md font-bold bg-primaryGreen text-white py-3 rounded-full hover:bg-primaryDark transition"
                     >
-                        Agree & Join
+                        Sign in
                     </button>
                 </form>
                 <div className="mt-6 border-t pt-4 text-center text-gray-600">
-                    Already on ConnectIn? <Link href="/signin" className="text-primaryGreen hover:underline">Sign in</Link>
+                    New to ConnectIn? <Link href="/signup" className="text-primaryGreen hover:underline">Sign Up</Link> now
                 </div>
             </div>
         </div>

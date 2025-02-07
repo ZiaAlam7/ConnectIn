@@ -40,6 +40,6 @@ userAuthSchema.pre("save", async function(next){
     next()
 })
 
-const UserAuth = models?.user || model<IUserAuth>("userAuth", userAuthSchema)
+const UserAuth = models?.userAuth || model<IUserAuth>("userAuth", userAuthSchema)
 
 export default UserAuth;
