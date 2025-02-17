@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/mongodb";
-import UserAuth from "@/models/User";
+import UserAuth from "@/models/UserAuth.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest){
         }
 
         return NextResponse.json(
-            { message: "Sign In Successfully", success:true},
+            { message: "Sign In Successfully", success:true, userId: registeredUser._id},
             { status: 201 }
         );
 

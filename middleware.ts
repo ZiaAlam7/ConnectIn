@@ -11,18 +11,21 @@ export default withAuth(
             authorized: ({token, req}) => {
                 const {pathname} = req.nextUrl;
                 
+              
+        
                 if(
                     pathname.startsWith("/api/auth") ||
-                    pathname === "/login" ||
-                    pathname === "/register"
+                    pathname === "/signup" ||
+                    pathname ===  "/signin"
                 ){
                     return true;
                 }
+                
 
-                if(pathname === "/" || pathname.startsWith("/api/videos")){
-                    return true;
-                }
-
+                // if(pathname === "/" || pathname.startsWith("/api/videos")){
+                //     return true;
+                // }
+             
                 return !!token
             } 
         }
@@ -32,5 +35,5 @@ export default withAuth(
 
 export const config = {
     // matcher: [ "/((?!_next/static|_next/image|favicon.ico/public/).*)"]
-    matcher: [ "/register"]
+    matcher: ["/((?!signup|signin).*)"]
 }

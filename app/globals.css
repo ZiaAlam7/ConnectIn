@@ -81,3 +81,14 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+.wrap-85 {
+  max-width: 85vw;
+  margin: 0px auto;
+}
+
+.wrap-95 {
+  max-width: 95vw;
+  margin: 0px auto;
+}
