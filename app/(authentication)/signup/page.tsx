@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Password from "@/components/ui/password";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -17,6 +18,10 @@ const SignupForm = () => {
     email: "",
     password: "",
   });
+ 
+  const handlePassword = (newValue: string) => {
+    setFormData({ ...formData, password: newValue })
+  };
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
@@ -79,7 +84,7 @@ const SignupForm = () => {
               placeholder="First Name"
               value={formData.first_name}
               onChange={handleChange}
-              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-primaryGreen"
               required
             />
             <input
@@ -88,7 +93,7 @@ const SignupForm = () => {
               placeholder="Last Name"
               value={formData.last_name}
               onChange={handleChange}
-              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-primaryGreen"
               required
             />
             <input
@@ -97,18 +102,10 @@ const SignupForm = () => {
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+              className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-primaryGreen"
               required
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full text-gray-600  p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-              required
-            />
+            <Password value={formData.password} handlePassword={handlePassword}/>
             <p className="text-xs text-center pt-3 text-gray-400 ">
               By clicking Agree & Join or Continue, you agree to the ConnectIn
               User Agreement, Privacy Policy, and Cookie Policy.
