@@ -49,6 +49,7 @@ userAuthSchema.pre("save", async function (next) {
   next();
 });
 
+
 const UserAuth =
   models?.UserAuth || model<IUserAuth>("UserAuth", userAuthSchema);
 

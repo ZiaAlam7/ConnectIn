@@ -1,6 +1,6 @@
 import connectToDatabase from "@/lib/mongodb";
 import UserAuth from "@/models/UserAuth.model";
-import ForgotPassword from "@/models/ResetPassword.model";
+import ForgotPassword from "@/models/ForgotPassword.model";
 import { sendMail } from "@/utils/sendEmail";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: "Password reset link sent" },
+      { message: "Password recovery mail sent" },
       { status: 200 }
     );
   } catch (error) {

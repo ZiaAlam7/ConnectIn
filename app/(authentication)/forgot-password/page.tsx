@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -20,8 +19,12 @@ const ForgotPassword = () => {
       const response = await axios.post("/api/auth/forgot-pass", { email });
       let data = response.data;
       toast({ description: data.message ? data.message : data.error });
-    } catch (error) {
-      console.log(error);
+
+      if (response.status === 201) {
+        router.push(`/reset-password`);
+      }
+    } catch (response:any) {
+      toast({ description: response.response.data.error });
     }
   };
 

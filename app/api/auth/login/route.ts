@@ -1,4 +1,4 @@
-import { connectToDatabase } from "@/lib/mongodb";
+import connectToDatabase  from "@/lib/mongodb";
 import UserAuth from "@/models/UserAuth.model";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest){
 
         if(!registeredUser){
             return NextResponse.json(
-                {error: "User does not exist"},
+                {message: "User does not exist"},
                 {status: 400}
             )
         }
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest){
         const passValid = await bcrypt.compare(password , registeredUser.password)
         if(!passValid){
             return NextResponse.json(
-                {error: "Incorrect Credentials"},
+                {message: "Incorrect Credentials"},
                 {status: 400}
             )
         }
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest){
 
     } catch (error) {
          return NextResponse.json(
-            { error: "Failed to authenticate the user" },
+            { message: "Failed to authenticate the user" },
             { status: 500 }
         );
     }

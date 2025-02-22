@@ -27,19 +27,23 @@ const SignupForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-    });
-
-    if (result?.error) {
-      // setError(result.error)
-      toast({ description: result.error });
-    } else {
-      router.push("/home");
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+  
+      if (result?.error) {
+        // setError(result.error)
+        toast({ description: result.error });
+      } else {
+        router.push("/home");
+      }
+  
+    } catch (error: any) {
+      toast({ description: error });
     }
-
   };
 
   return (
