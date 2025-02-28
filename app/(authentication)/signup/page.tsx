@@ -7,6 +7,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Password from "@/components/ui/password";
+import Image from "next/image";
+import google_logo from "@/public/google_logo.png";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -67,16 +69,20 @@ const SignupForm = () => {
     }
   };
 
+  const handleGoogleSignup = () => {
+      signIn("google", { callbackUrl: "/home" });
+    }
+
   return (
     <>
       <div className="bg-[#F4F2F0] h-[92vh] flex flex-col justify-center items-center">
         <h1 className="text-4xl mb-8 text-black font-sans font-thin">
           Make the most of your professional life
         </h1>
-        <div className="max-w-sm  p-6 bg-white shadow-lg rounded-lg">
-          <h2 className="text-2xl font-bold mb-7 text-center text-black">
+        <div className="max-w-sm  p-6 bg-white shadow-lg rounded-lg min-w-[26rem]">
+          {/* <h2 className="text-2xl font-bold mb-7 text-center text-black">
             Join ConnectIn
-          </h2>
+          </h2> */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
@@ -117,6 +123,11 @@ const SignupForm = () => {
               Agree & Join
             </button>
           </form>
+          <div className="text-center my-3">or</div>
+          <div className=" flex justify-center">
+            <Image src={google_logo} alt="google-logo" width={50} className="border border-gray-300"/>
+          <button onClick={handleGoogleSignup} className="bg-blue-600  text-white px-2 ">Sign up with google</button>
+        </div>
           <div className="mt-6 border-t pt-4 text-center text-gray-600">
             Already on ConnectIn?{" "}
             <Link href="/signin" className="text-primaryGreen hover:underline">

@@ -214,14 +214,20 @@ const AddressPage = () => {
     city: "",
   });
   const [session, setSession] = useState<any>(null);
+  const [name, setName] = useState("{name}")
 
   useEffect(() => {
     getSession().then((session) => {
       setSession(session);
+      if (session?.user?.first_name) {
+        setName(session.user.first_name);
+      }
+      if (session?.user?.name) {
+        setName(session.user.name);
+      }
     });
   }, []);
-  const first_name = session?.user?.first_name || "User";
-  const First_Name = first_name.charAt(0).toUpperCase() + first_name.slice(1);
+
 
   const isFormComplete = Object.values(address).every(
     (value) => value.trim() !== ""
@@ -261,7 +267,7 @@ const AddressPage = () => {
     <>
       <div className="bg-[#F4F2F0] h-[92vh] flex flex-col items-center pt-[5rem]">
         <h1 className="text-4xl mb-8 text-black font-sans font-thin">
-          Welcome, {First_Name}! What's your location?
+          Welcome, {name}! What's your location?
         </h1>
         <p>See people, news and jobs in your area</p>
         <div className="w-[80%] md:w-[40%]  p-6">

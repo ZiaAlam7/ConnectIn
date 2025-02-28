@@ -11,7 +11,7 @@ const HomePage = async () => {
   return (
     <div className="h-screen bg-gray-800 flex items-center justify-center">
       <h1 className="text-6xl font-bold text-primaryGreen">
-        Welcom {first_name} {last_name} to ConnectIn Home
+        Welcom {first_name} {last_name} to ConnectIn
       </h1>
     </div>
   );

@@ -13,14 +13,15 @@ export async function POST(request: NextRequest) {
     }
 
    
-    const userId = session.user.id; 
+    const email = session.user.email; 
 
     const { address, education, work } = await request.json();
 
     await connectToDatabase();
-    console.log(education);
+    // const userEmail = localStorage.getItem('userEmail')
+   
     const updatedUser = await UserDetail.findOneAndUpdate(
-      { user_id : userId}, 
+      { email : email}, 
       {
         $set: {
           address,

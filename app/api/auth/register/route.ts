@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     await connectToDatabase();
-
+    localStorage.setItem('userEmail', JSON.stringify(email))
     const existingUser = await UserAuth.findOne({ email });
 
     if (existingUser) {

@@ -6,6 +6,8 @@ import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import Password from "@/components/ui/password";
+import Image from "next/image";
+import google_logo from "@/public/google_logo.png";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -46,6 +48,10 @@ const SignupForm = () => {
     }
   };
 
+  const handleGoogleSignin = () => {
+    signIn("google", { callbackUrl: "/home" });
+  }
+
   return (
     <>
       <div className="bg-[#F4F2F0] h-[92vh] flex flex-col pt-[5rem] items-center">
@@ -77,6 +83,11 @@ const SignupForm = () => {
               Sign in
             </button>
           </form>
+          <div className="text-center my-4">or</div>
+          <div className=" flex justify-center">
+            <Image src={google_logo} alt="google-logo" width={50} className="border border-gray-300"/>
+          <button onClick={handleGoogleSignin} className="bg-blue-600  text-white px-2 ">Sign in with google</button>
+        </div>
           <div className="mt-6 border-t pt-4 text-center text-gray-600">
             New to ConnectIn?{" "}
             <Link href="/signup" className="text-primaryGreen hover:underline">
@@ -85,6 +96,7 @@ const SignupForm = () => {
             now
           </div>
         </div>
+       
       </div>
     </>
   );
