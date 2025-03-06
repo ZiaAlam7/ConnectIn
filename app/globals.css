@@ -92,3 +92,18 @@ body {
   max-width: 95vw;
   margin: 0px auto;
 }
+
+@layer utilities {
+  /* Responsive container widths */
+  @media (max-width: 768px) {
+    .max-w-\[75\%\] {
+      max-width: 90%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .max-w-\[75\%\] {
+      max-width: 95%;
+    }
+  }
+}
