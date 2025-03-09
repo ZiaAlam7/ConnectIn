@@ -12,11 +12,12 @@ import { Container } from "@/components/layout/container"
 export default function ProfilePage() {
   return (
     <div className="bg-gray-50 min-h-screen pb-16">
-      <ProfileHeader />
+  
 
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
           <div className="lg:col-span-2 space-y-6">
+          <ProfileHeader />
             <AboutSection />
             <ActivitySection />
             <ExperienceSection />

@@ -4,7 +4,7 @@ import { PencilIcon, CameraIcon, PlusIcon } from "lucide-react"
 
 export default function ProfileHeader() {
   return (
-    <div className="bg-white shadow rounded-b-xl w-full max-w-[75%] mx-auto">
+    <div className="bg-white shadow rounded-b-xl w-full ">
       {/* Cover Image */}
       <div className="relative h-60 w-full">
         <Image
@@ -25,7 +25,7 @@ export default function ProfileHeader() {
         <div className="absolute -top-20 left-6 border-4 border-white rounded-full shadow-xl sm:left-8">
           <div className="relative">
             <Image
-              src="/placeholder.svg?height=160&width=160"
+              src="/zz.jpg?height=160&width=160"
               alt="Profile Picture"
               className="rounded-full object-cover"
               width={160}

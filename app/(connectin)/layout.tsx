@@ -1,6 +1,7 @@
+import { Navbar } from "@/components/ui/navbar";
 import logo from "../../public/Connectin_logo.png";
-
 import Image from "next/image";
+
 
 export default function RegistrationLayout({
   children,
@@ -9,9 +10,7 @@ export default function RegistrationLayout({
 }>) {
   return (
     <>
-        <div className="h-[8vh] bg-[#F4F2F0] px-[5rem] py-2 w-[75%] m-auto">
-          this is nav bar
-        </div>
+        <Navbar/>
         <main>{children}</main>
 
     </>
