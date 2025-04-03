@@ -1,4 +1,4 @@
-import  connectToDatabase from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
 import UserAuth from "@/models/UserAuth.model";
 import UserDetail from "@/models/UserDetail.model";
 import { NextRequest, NextResponse } from "next/server";
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     await connectToDatabase();
-    localStorage.setItem('userEmail', JSON.stringify(email))
+    // localStorage.setItem("userEmail", JSON.stringify(email));
     const existingUser = await UserAuth.findOne({ email });
 
     if (existingUser) {
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       last_name,
       email,
       password,
+      
     });
 
     await UserDetail.create({

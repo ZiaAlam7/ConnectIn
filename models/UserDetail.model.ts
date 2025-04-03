@@ -33,6 +33,7 @@ export interface IUserDetail {
   address: IAddress;
   education: IEducation[];
   work: IWork[];
+  profile_image: string;
   _id?: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -72,6 +73,9 @@ const userDetailSchema = new Schema<IUserDetail>(
     address: { type: AddressSchema },
     education: [EducationSchema],
     work: [WorkSchema],
+    profile_image: { type: String,
+      default: "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
+     },
   },
   { timestamps: true }
 );

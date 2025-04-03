@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import logo from "../../public/Connectin_logo.png";
 import IKProvider from "@/components/imageKit/IKProvider";
 
+
 import Image from "next/image";
 
 const geistSans = Geist({
@@ -33,8 +34,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <IKProvider>
+        
            {children}
+
            </IKProvider>
+
  
         <Toaster />
       </body>

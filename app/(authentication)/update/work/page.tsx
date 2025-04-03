@@ -167,6 +167,9 @@ const Work = () => {
         );
       }
     }
+    else{
+      router.push(`/home`);
+    }
   };
 
   const handleCheck = () => {

@@ -261,6 +261,9 @@ const AddressPage = () => {
       localStorage.setItem("userDetail", JSON.stringify(removeUserDetail));
       router.push(`/update/education`);
     }
+    else{
+      router.push(`/update/education`);
+    }
   };
 
   return (

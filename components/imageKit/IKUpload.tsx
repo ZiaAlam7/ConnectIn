@@ -11,7 +11,7 @@ interface FileUploadProps {
 }
 
 
-export default function imagekitUpload({
+export default function ImageKitUpload({
     onSucess,
     onProgress,
     fileType = "image"

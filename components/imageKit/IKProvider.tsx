@@ -43,17 +43,3 @@ export default function IKProvider({
     </SessionProvider>
   );
 }
-
-// <div className="App">
-//       <h1>ImageKit Next.js quick start</h1>
-//       <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
-//         <div>
-//           <h2>File upload</h2>
-//           <IKUpload fileName="test-upload.png" onError={onError} onSuccess={onSuccess} />
-//         </div>
-//         <div>
-//         <IKImage path="/test-upload_0DwD3MkGG.png" width="200" height="200" alt="Alt text" />
-//         </div>
-//       </ImageKitProvider>
-//       {/* ...other SDK components added previously */}
-//     </div>

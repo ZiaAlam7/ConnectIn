@@ -341,6 +341,9 @@ const EducationPage = () => {
       localStorage.setItem("userDetail", JSON.stringify(removeUserDetail));
       router.push(`/update/work`);
     }
+    else{
+      router.push(`/update/work`);
+    }
   };
 
   return (
