@@ -35,6 +35,7 @@ export interface IUserDetail {
   work: IWork[];
   profile_image: string;
   cover_image: string;
+  about: string;
   _id?: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -74,12 +75,16 @@ const userDetailSchema = new Schema<IUserDetail>(
     address: { type: AddressSchema },
     education: [EducationSchema],
     work: [WorkSchema],
-    profile_image: { type: String,
-      default: "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
-     },
-     cover_image: { type: String,
-      default: "/placeholder.svg?height=400&width=1200"
-     },
+    profile_image: {
+      type: String,
+      default:
+        "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814",
+    },
+    cover_image: {
+      type: String,
+      default: "/placeholder.svg?height=400&width=1200",
+    },
+    about: { type: String },
   },
   { timestamps: true }
 );

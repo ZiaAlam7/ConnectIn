@@ -17,32 +17,37 @@ const ProfileHeader = () => {
   const { data: session, status } = useSession();
   const email = session?.user.email;
   const [isOpen, setIsOpen] = useState(false);
-  const [imageType, setImageType] = useState('');
+  const [imageType, setImageType] = useState("");
   const [targetImage, setTargetImage] = useState(
     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
   );
-  const { user }:any = useUser();
-  const imageKitUrl:string =   imageType === "profile"
-  ? "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
-  : "https://ik.imagekit.io/ConnectIn/placeholder.svg?updatedAt=1743836732290";
-  const userProfileImage = user?.detail?.profile_image;
-  const userCoverImage = user?.detail?.cover_image;
-  const fullName = `${user?.detail?.first_name} ${user?.detail?.last_name}`;
-  const country = user?.detail?.address?.country;
-  const city = user?.detail?.address?.city;
+  const { user }: any = useUser();
+  const imageKitUrl: string =
+    imageType === "profile_image"
+      ? "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
+      : "https://ik.imagekit.io/ConnectIn/placeholder.svg?updatedAt=1743836732290";
+  const userProfileImage = user?.profile_image;
+  const userCoverImage = user?.cover_image;
+  const fullName = `${user?.first_name} ${user?.last_name}`;
+  const country = user?.address?.country;
+  const city = user?.address?.city;
+  const job = user?.work[0]?.job_title;
+  const company = user?.work[0]?.company_name;
 
   console.log("This is user ", user);
 
   const handleChangeImage = async () => {
+    setIsOpen(false);
     window.location.reload();
   };
 
   const handleDeleteImage = async () => {
+    const target = imageType;
+    const values = imageKitUrl;
     try {
       const response = await axios.post(
-        "/api/imagekit-update",
-        {imageKitUrl,
-        imageType},
+        "/api/user-update",
+        { target, values },
         {
           headers: {
             "Content-Type": "application/json",
@@ -56,7 +61,7 @@ const ProfileHeader = () => {
         error.response?.data || error.message
       );
     }
-
+    setIsOpen(false);
     window.location.reload();
   };
 
@@ -112,9 +117,10 @@ const ProfileHeader = () => {
         <button className="absolute right-4 bottom-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
           <CameraIcon
             className="h-5 w-5 text-gray-700"
-            onClick={() => {setIsOpen(true)
-              setImageType("cover")
-              setTargetImage(userCoverImage)
+            onClick={() => {
+              setIsOpen(true);
+              setImageType("cover_image");
+              setTargetImage(userCoverImage);
             }}
           />
         </button>
@@ -142,9 +148,10 @@ const ProfileHeader = () => {
             <button className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
               <CameraIcon
                 className="h-5 w-5 text-gray-700"
-                onClick={() => {setIsOpen(true)
-                  setImageType("profile")
-                  setTargetImage(userProfileImage)
+                onClick={() => {
+                  setIsOpen(true);
+                  setImageType("profile_image");
+                  setTargetImage(userProfileImage);
                 }}
               />
             </button>
@@ -169,7 +176,7 @@ const ProfileHeader = () => {
         <div className="mt-16">
           <h1 className="text-2xl font-bold">{fullName}</h1>
           <h2 className="text-lg text-gray-700">
-            Senior Software Engineer at TechCorp
+            {job} at {company}
           </h2>
           <div className="flex items-center text-sm text-gray-500 mt-1">
             <span>

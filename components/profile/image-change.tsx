@@ -39,12 +39,13 @@ export function ProfileImageOverlay({
   const onSuccess = async (res: any) => {
     console.log("Success", res);
 
-    const imageKitUrl = res.url;
+    const values = res.url;
+    const target = imageType
 
     try {
       const response = await axios.post(
-        "/api/imagekit-update",
-        { imageKitUrl, imageType },
+        "/api/user-update",
+        { target, values },
         {
           headers: {
             "Content-Type": "application/json",
@@ -74,7 +75,7 @@ export function ProfileImageOverlay({
           </Button>
         </CardHeader>
         <CardContent className="flex items-center justify-center p-6">
-          {imageType === "profile" && (
+          {imageType === "profile_image" && (
             <div className="relative w-40 h-40 overflow-hidden rounded-full">
               <IKImage
                 src={targetImage}
@@ -85,7 +86,7 @@ export function ProfileImageOverlay({
               />
             </div>
           )}
-          {imageType === "cover" && (
+          {imageType === "cover_image" && (
             <div className="relative w-[480px] h-[180px] overflow-hidden rounded-t-xl flex items-center justify-center">
               <IKImage
                 src={targetImage}
