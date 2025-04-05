@@ -10,6 +10,7 @@ import ProfileSidebar from "@/components/profile/profile-sidebar"
 import { Container } from "@/components/layout/container"
 
 export default function ProfilePage() {
+  
   return (
     <div className="bg-gray-50 min-h-screen pb-16">
   

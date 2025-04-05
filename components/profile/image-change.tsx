@@ -15,16 +15,18 @@ import { IKImage } from "imagekitio-next";
 
 interface ProfileImageOverlayProps {
   isOpen: boolean;
+  imageType: string;
   onClose: () => void;
-  profileImage: string;
+  targetImage: string;
   onChangeImage: () => void;
   onDeleteImage: () => void;
 }
 
 export function ProfileImageOverlay({
   isOpen,
+  imageType,
   onClose,
-  profileImage,
+  targetImage,
   onChangeImage,
   onDeleteImage,
 }: ProfileImageOverlayProps) {
@@ -37,14 +39,18 @@ export function ProfileImageOverlay({
   const onSuccess = async (res: any) => {
     console.log("Success", res);
 
-    const profile_image = res.url;
+    const imageKitUrl = res.url;
 
     try {
-      const response = await axios.post("/api/imagekit-update", profile_image, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "/api/imagekit-update",
+        { imageKitUrl, imageType },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log("Image Changed:", response.data);
     } catch (error: any) {
       console.error(
@@ -68,16 +74,28 @@ export function ProfileImageOverlay({
           </Button>
         </CardHeader>
         <CardContent className="flex items-center justify-center p-6">
-          <div className="relative w-40 h-40 overflow-hidden rounded-full">
-            <IKImage
-              // urlEndpoint={urlEndpoint}
-              src={profileImage}
-              alt="Profile Picture"
-              className="rounded-full object-cover"
-              width={160}
-              height={160}
-            />
-          </div>
+          {imageType === "profile" && (
+            <div className="relative w-40 h-40 overflow-hidden rounded-full">
+              <IKImage
+                src={targetImage}
+                alt="Profile Picture"
+                className="rounded-full object-cover"
+                width={160}
+                height={160}
+              />
+            </div>
+          )}
+          {imageType === "cover" && (
+            <div className="relative w-[480px] h-[180px] overflow-hidden rounded-t-xl flex items-center justify-center">
+              <IKImage
+                src={targetImage}
+                alt="Cover Picture"
+                className="rounded-t-xl object-cover object-center"
+                width={480}
+                height={180}
+              />
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between p-4">
           <Button onClick={() => uploadRef.current?.click()}>

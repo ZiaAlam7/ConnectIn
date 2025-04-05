@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import logo from "../../public/Connectin_logo.png";
 import IKProvider from "@/components/imageKit/IKProvider";
-
+import { UserProvider } from "@/context/UserContext";
 
 import Image from "next/image";
 
@@ -33,13 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <IKProvider>
-        
-           {children}
+         <UserProvider>
+        <IKProvider>{children}</IKProvider>
+        </UserProvider>
 
-           </IKProvider>
-
- 
         <Toaster />
       </body>
     </html>

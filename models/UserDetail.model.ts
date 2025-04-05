@@ -34,6 +34,7 @@ export interface IUserDetail {
   education: IEducation[];
   work: IWork[];
   profile_image: string;
+  cover_image: string;
   _id?: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -75,6 +76,9 @@ const userDetailSchema = new Schema<IUserDetail>(
     work: [WorkSchema],
     profile_image: { type: String,
       default: "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
+     },
+     cover_image: { type: String,
+      default: "/placeholder.svg?height=400&width=1200"
      },
   },
   { timestamps: true }

@@ -1,9 +1,10 @@
 "use client"
 
-import * as React from "react"
+import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bell, Briefcase, Home, MessageSquare, Search, Users } from "lucide-react"
+import axios from 'axios';
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -55,6 +56,26 @@ const navItems: NavItem[] = [
 export function Navbar() {
   const pathname = usePathname()
   const [isSearchFocused, setIsSearchFocused] = React.useState(false)
+
+    const [profileImg, setProfileImg] = useState(
+      "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
+    );
+
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      try {
+        const response = await axios.get('/api/user-detail'); // Request to Next.js API route
+       const imgurl =  response.data.detail.profile_image
+        setProfileImg(imgurl)
+      } catch (err) {
+        console.log(err)
+      } 
+    };
+
+    fetchUserDetail();
+  }, []);
+
+
 
   return (
     
@@ -189,7 +210,7 @@ export function Navbar() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                  <AvatarImage src={profileImg} alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
               </Button>
@@ -197,7 +218,7 @@ export function Navbar() {
             <DropdownMenuContent align="end" className="w-56">
               <div className="flex items-center gap-2 p-2">
                 <Avatar>
-                  <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
+                  <AvatarImage src={profileImg} alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div>

@@ -16,19 +16,19 @@ export async function POST(request: NextRequest) {
     const email = session.user.email; 
     console.log(email)
 
-    const  profile_image  = await request.json();
+    const  {imageKitUrl, imageType}  = await request.json();
 
-    console.log(profile_image)
 
     await connectToDatabase();
-    // const userEmail = localStorage.getItem('userEmail')
-   
+    
+    const updateField = imageType === 'profile' 
+    ? { profile_image: imageKitUrl } 
+    : { cover_image: imageKitUrl };
+  
     const updatedUser = await UserDetail.findOneAndUpdate(
       { email : email}, 
       {
-        $set: {
-            profile_image
-        },
+        $set: updateField, 
       }
     );
 
