@@ -11,9 +11,11 @@ import { setEngine } from "crypto";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 const ProfileHeader = () => {
   const router = useRouter();
+
   const { data: session, status } = useSession();
   const email = session?.user.email;
   const [isOpen, setIsOpen] = useState(false);
@@ -22,13 +24,13 @@ const ProfileHeader = () => {
     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
   );
   const { user }: any = useUser();
+  const fullName = `${user?.first_name} ${user?.last_name}`;
   const imageKitUrl: string =
     imageType === "profile_image"
       ? "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
       : "https://ik.imagekit.io/ConnectIn/placeholder.svg?updatedAt=1743836732290";
   const userProfileImage = user?.profile_image;
   const userCoverImage = user?.cover_image;
-  const fullName = `${user?.first_name} ${user?.last_name}`;
   const country = user?.address?.country;
   const city = user?.address?.city;
   const job = user?.work[0]?.job_title;
@@ -65,27 +67,7 @@ const ProfileHeader = () => {
     window.location.reload();
   };
 
-  // const onSuccess = async (res: any) => {
-  //   console.log("Success", res);
-  // };
-
-  // const onError = (err: any) => {
-  //   console.log("Error", err);
-  // };
-
-  // useEffect(() => {
-  //   const fetchUserDetail = async () => {
-  //     try {
-  //       const response = await axios.get('/api/user-detail'); // Request to Next.js API route
-  //      const imgurl =  response.data.detail.profile_image
-  //       setProfileImg(imgurl)
-  //     } catch (err) {
-  //       console.log(err)
-  //     }
-  //   };
-
-  //   fetchUserDetail();
-  // }, []);
+  if (!user) return <LoadingSpinner />;
 
   return (
     <div className="bg-white shadow rounded-b-xl w-full ">
@@ -189,7 +171,7 @@ const ProfileHeader = () => {
           </div>
 
           <div className="flex gap-2 mt-4">
-            <Button className="rounded-full bg-blue-600 hover:bg-blue-700">
+            <Button className="rounded-full bg-[var(--mainGreen)] hover:bg-[var(--mainGreenDark)]">
               Message
             </Button>
             <Button variant="outline" className="rounded-full">

@@ -1,83 +1,258 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { MessageSquare, ThumbsUp, Repeat, Send } from "lucide-react"
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Eye, Pencil, ArrowRight, ThumbsUp, Heart } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { IKImage } from "imagekitio-next";
+import { useUser } from "@/context/UserContext";
 
 export default function ActivitySection() {
+  const [activeTab, setActiveTab] = useState("posts");
+  const { user }: any = useUser();
+  const fullName = `${user?.first_name} ${user?.last_name}`;
+
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Activity</h2>
-        <Button variant="outline" size="sm" className="rounded-full">
-          See all
-        </Button>
-      </div>
-
-      <div className="text-sm text-gray-500 mb-6">
-        <span className="font-medium">3,621 followers</span>
-        <p>Alex posts about web development, career growth, and tech industry trends</p>
-      </div>
-
-      {/* Sample Post */}
-      <div className="border-t pt-4">
-        <div className="flex items-start gap-3 mb-3">
-          <Image
-            src="/placeholder.svg?height=48&width=48"
-            alt="Profile Picture"
-            className="rounded-full"
-            width={48}
-            height={48}
-          />
-          <div>
-            <p className="font-medium">Alex Johnson</p>
-            <p className="text-xs text-gray-500">Senior Software Engineer at TechCorp</p>
-            <p className="text-xs text-gray-500">2d • 🌎</p>
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div>
+          <h2 className="text-xl font-semibold">Activity</h2>
+          <p className="text-sm text-muted-foreground">1,342 followers</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="rounded-full">
+            Create a post
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="pb-1">
+        <div className="w-full">
+          <div className="mb-4 grid w-full grid-cols-4 gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("posts")}
+              className={`rounded-full ${
+                activeTab === "posts"
+                  ? "bg-emerald-700 text-white hover:bg-emerald-800 hover:text-white"
+                  : ""
+              }`}
+            >
+              Posts
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("comments")}
+              className={`rounded-full ${
+                activeTab === "comments"
+                  ? "bg-emerald-700 text-white hover:bg-emerald-800 hover:text-white"
+                  : ""
+              }`}
+            >
+              Comments
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("videos")}
+              className={`rounded-full ${
+                activeTab === "videos"
+                  ? "bg-emerald-700 text-white hover:bg-emerald-800 hover:text-white"
+                  : ""
+              }`}
+            >
+              Videos
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab("images")}
+              className={`rounded-full ${
+                activeTab === "images"
+                  ? "bg-emerald-700 text-white hover:bg-emerald-800 hover:text-white"
+                  : ""
+              }`}
+            >
+              Images
+            </Button>
           </div>
-        </div>
 
-        <p className="mb-4">
-          Just published a new article on optimizing React performance. Check it out and let me know your thoughts!
-        </p>
+          {activeTab === "posts" && (
+            <div className="space-y-6">
+              {/* First post */}
+              <div className="border-b pb-6">
+                <div className="flex items-center gap-1 mb-2">
+                  <span className="font-medium">{fullName}</span>
+                  <span className="text-muted-foreground text-sm">
+                    reposted this
+                  </span>
+                  <span className="text-muted-foreground text-sm">• 2d</span>
+                </div>
 
-        <div className="mb-4 rounded-lg overflow-hidden border">
-          <Image
-            src="/placeholder.svg?height=300&width=600"
-            alt="Post Image"
-            className="w-full"
-            width={600}
-            height={300}
-          />
-        </div>
+                <div className="flex gap-3">
+                  <IKImage
+                    src={
+                      "https://ik.imagekit.io/ConnectIn/pexels-pixabay-147411_XcQIIKj7cU.jpg?updatedAt=1743941978568"
+                    }
+                    alt="Post thumbnail"
+                    className="rounded-md object-cover"
+                    width={80}
+                    height={80}
+                  />
+                  <div className="flex-1">
+                    <p className="line-clamp-2">
+                      This is what war does to the most innocent. An infant in
+                      Gaza, whose only crime was being born, now bears wounds no
+                      child should ever know.
+                    </p>
+                    <button className="text-sm text-muted-foreground hover:underline">
+                      ...show more
+                    </button>
+                  </div>
+                </div>
 
-        <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 pb-2">
-          <div className="flex items-center gap-1">
-            <span className="bg-blue-100 text-blue-600 rounded-full p-1">
-              <ThumbsUp className="h-3 w-3" />
-            </span>
-            <span>142</span>
-          </div>
-          <div>24 comments • 7 reposts</div>
-        </div>
+                <div className="flex justify-between mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="flex -space-x-1">
+                      <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center">
+                        <ThumbsUp className="h-3 w-3 text-white" />
+                      </div>
+                    </div>
+                    <span className="text-sm text-muted-foreground">788</span>
+                  </div>
+                  <div className="flex gap-2 text-sm text-muted-foreground">
+                    <span>35 comments</span>
+                    <span>•</span>
+                    <span>434 reposts</span>
+                  </div>
+                </div>
+              </div>
 
-        <div className="flex flex-wrap sm:flex-nowrap justify-between pt-2 border-t">
-          <Button variant="ghost" size="sm" className="flex-1 rounded-md">
-            <ThumbsUp className="h-5 w-5 mr-2" />
-            Like
-          </Button>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-md">
-            <MessageSquare className="h-5 w-5 mr-2" />
-            Comment
-          </Button>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-md">
-            <Repeat className="h-5 w-5 mr-2" />
-            Repost
-          </Button>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-md">
-            <Send className="h-5 w-5 mr-2" />
-            Send
-          </Button>
+              {/* Second post */}
+              <div className="border-b pb-6">
+                <div className="flex items-center gap-1 mb-2">
+                  <span className="font-medium">{fullName}</span>
+                  <span className="text-muted-foreground text-sm">
+                    reposted this
+                  </span>
+                  <span className="text-muted-foreground text-sm">• 2d</span>
+                </div>
+
+                <div className="flex gap-3">
+                  <IKImage
+                    src={
+                      "https://ik.imagekit.io/ConnectIn/pexels-pixabay-147411_XcQIIKj7cU.jpg?updatedAt=1743941978568"
+                    }
+                    alt="Post thumbnail"
+                    className="rounded-md object-cover"
+                    width={80}
+                    height={80}
+                  />
+                  <div className="flex-1">
+                    <p className="line-clamp-2">
+                      An infant in Gaza, whose only crime was being born, now
+                      bears wounds no child should ever know.
+                    </p>
+                    <button className="text-sm text-muted-foreground hover:underline">
+                      ...show more
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="flex -space-x-1">
+                      <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center">
+                        <ThumbsUp className="h-3 w-3 text-white" />
+                      </div>
+                    </div>
+                    <span className="text-sm text-muted-foreground">788</span>
+                  </div>
+                  <div className="flex gap-2 text-sm text-muted-foreground">
+                    <span>35 comments</span>
+                    <span>•</span>
+                    <span>434 reposts</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Third post with sensitive content */}
+              <div className="border-b pb-6">
+                <div className="flex items-center gap-1 mb-2">
+                  <span className="font-medium">{fullName}</span>
+                  <span className="text-muted-foreground text-sm">
+                    reposted this
+                  </span>
+                  <span className="text-muted-foreground text-sm">• 2d</span>
+                </div>
+
+                <div className="flex gap-3">
+                  <IKImage
+                    src={
+                      "https://ik.imagekit.io/ConnectIn/pexels-pixabay-147411_XcQIIKj7cU.jpg?updatedAt=1743941978568"
+                    }
+                    alt="Post thumbnail"
+                    className="rounded-md object-cover"
+                    width={80}
+                    height={80}
+                  />
+                  <div className="flex-1">
+                    <p className="line-clamp-2">
+                      An infant in Gaza, whose only crime was being born, now
+                      bears wounds no child should ever know.
+                    </p>
+                    <button className="text-sm text-muted-foreground hover:underline">
+                      ...show more
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between mt-2">
+                  <div className="flex items-center gap-1">
+                    <div className="flex -space-x-1">
+                      <div className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center">
+                        <ThumbsUp className="h-3 w-3 text-white" />
+                      </div>
+                    </div>
+                    <span className="text-sm text-muted-foreground">788</span>
+                  </div>
+                  <div className="flex gap-2 text-sm text-muted-foreground">
+                    <span>35 comments</span>
+                    <span>•</span>
+                    <span>434 reposts</span>
+                  </div>
+                </div>
+              </div>
+              {/* Show all posts link */}
+              <div className="flex justify-center">
+                <Button variant="ghost" className="flex items-center gap-1">
+                  Show all posts
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "comments" && (
+            <div className="py-8 text-center text-muted-foreground">
+              No comments to display
+            </div>
+          )}
+
+          {activeTab === "videos" && (
+            <div className="py-8 text-center text-muted-foreground">
+              No videos to display
+            </div>
+          )}
+
+          {activeTab === "images" && (
+            <div className="py-8 text-center text-muted-foreground">
+              No images to display
+            </div>
+          )}
         </div>
-      </div>
-    </div>
-  )
+      </CardContent>
+    </Card>
+  );
 }
-

@@ -1,67 +1,94 @@
-import { Button } from "@/components/ui/button"
-import { PencilIcon, PlusIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+"use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Plus, Pencil, ArrowRight } from "lucide-react";
+import { useUser } from "@/context/UserContext";
+
+interface Skill {
+  name: string;
+  // endorsements?: number
+}
+
+// interface SkillsSectionProps {
+//   skills?: Skill[]
+// }
+
+// { skills = defaultSkills }: SkillsSectionProps
+
+type User = {
+  skill: string[];
+};
 
 export default function SkillsSection() {
+  const { user } = useUser() as { user: User | null };
+  const skills = user?.skill ?? [];
+
+  const visibleSkills = skills.slice(0, 3);
+  const hasMoreSkills = skills.length > 3;
+
   return (
-    <div className="bg-white rounded-xl shadow p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Skills</h2>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <PlusIcon className="h-5 w-5" />
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <h2 className="text-xl font-semibold">Skills</h2>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Plus className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <PencilIcon className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Pencil className="h-4 w-4" />
           </Button>
         </div>
-      </div>
-
-      {/* Skill Category 1 */}
-      <div className="mb-6 pb-6 border-b">
-        <h3 className="font-semibold mb-3">Top Skills</h3>
-        <div className="flex flex-wrap gap-2 max-w-full">
-          <SkillBadge name="React.js" endorsements={42} />
-          <SkillBadge name="TypeScript" endorsements={38} />
-          <SkillBadge name="Node.js" endorsements={35} />
-          <SkillBadge name="AWS" endorsements={31} />
-          <SkillBadge name="System Design" endorsements={28} />
+      </CardHeader>
+      <CardContent className="p-0">
+        <div>
+          {visibleSkills.map((skill, index) => (
+            <div
+              key={skill}
+              className={`px-6 py-4 ${
+                index < visibleSkills.length - 1 ? "border-b" : ""
+              }`}
+            >
+              <h3 className="font-medium">{skill}</h3>
+              {/* {skill.endorsements && <p className="text-muted-foreground">{skill.endorsements} endorsements</p>} */}
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* Skill Category 2 */}
-      <div className="mb-6 pb-6 border-b">
-        <h3 className="font-semibold mb-3">Industry Knowledge</h3>
-        <div className="flex flex-wrap gap-2 max-w-full">
-          <SkillBadge name="Software Development" endorsements={25} />
-          <SkillBadge name="Web Development" endorsements={22} />
-          <SkillBadge name="Agile Methodologies" endorsements={19} />
-          <SkillBadge name="Cloud Computing" endorsements={17} />
-          <SkillBadge name="DevOps" endorsements={15} />
-        </div>
-      </div>
-
-      {/* Skill Category 3 */}
-      <div>
-        <h3 className="font-semibold mb-3">Tools & Technologies</h3>
-        <div className="flex flex-wrap gap-2 max-w-full">
-          <SkillBadge name="Git" endorsements={20} />
-          <SkillBadge name="Docker" endorsements={18} />
-          <SkillBadge name="Kubernetes" endorsements={16} />
-          <SkillBadge name="GraphQL" endorsements={14} />
-          <SkillBadge name="MongoDB" endorsements={12} />
-        </div>
-      </div>
-    </div>
-  )
+        {hasMoreSkills && (
+          <div className="flex justify-center py-4 border-t">
+            <Button
+              variant="ghost"
+              className="flex items-center gap-1 text-muted-foreground"
+            >
+              Show all {skills.length} skills
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
-function SkillBadge({ name, endorsements }: { name: string; endorsements: number }) {
-  return (
-    <Badge variant="outline" className="py-2 px-3 bg-gray-50 hover:bg-gray-100 cursor-pointer text-xs sm:text-sm">
-      <span>{name}</span>
-      {endorsements > 0 && <span className="ml-1 sm:ml-2 text-xs text-gray-500">• {endorsements}</span>}
-    </Badge>
-  )
-}
-
+const defaultSkills: Skill[] = [
+  {
+    name: "JavaScript",
+    // endorsements: 42,
+  },
+  {
+    name: "React",
+    // endorsements: 38,
+  },
+  {
+    name: "Node.js",
+    // endorsements: 27,
+  },
+  {
+    name: "TypeScript",
+    // endorsements: 23,
+  },
+  {
+    name: "HTML/CSS",
+    // endorsements: 19,
+  },
+];

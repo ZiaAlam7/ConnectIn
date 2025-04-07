@@ -24,6 +24,10 @@ export interface IWork {
   end_year: string;
   end_month: string;
 }
+export interface ILanguage {
+  name: string;
+  proficiency: string;
+}
 
 export interface IUserDetail {
   user_id: string;
@@ -36,6 +40,8 @@ export interface IUserDetail {
   profile_image: string;
   cover_image: string;
   about: string;
+  skill: string[];
+  language: ILanguage[];
   _id?: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -66,6 +72,11 @@ const WorkSchema = new Schema<IWork>({
   end_year: { type: String },
 });
 
+const LanguageSchema = new Schema<ILanguage>({
+  name: { type: String },
+  proficiency: { type: String },
+});
+
 const userDetailSchema = new Schema<IUserDetail>(
   {
     user_id: { type: String, required: true },
@@ -85,6 +96,8 @@ const userDetailSchema = new Schema<IUserDetail>(
       default: "/placeholder.svg?height=400&width=1200",
     },
     about: { type: String },
+    skill: [{ type: String }],
+    language: [LanguageSchema]
   },
   { timestamps: true }
 );

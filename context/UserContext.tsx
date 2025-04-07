@@ -17,6 +17,7 @@ type User = {
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
+
 }
 
 // Create Context (default value is null)
@@ -25,6 +26,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 // Provider Component
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch user data when the app loads
   useEffect(() => {
@@ -35,7 +37,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUser(data);
       } catch (error) {
         console.error("Failed to fetch user:", error);
-      }
+      } 
     };
   
     fetchUser();

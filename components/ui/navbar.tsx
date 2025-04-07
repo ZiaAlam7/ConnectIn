@@ -5,7 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Bell, Briefcase, Home, MessageSquare, Search, Users } from "lucide-react"
 import axios from 'axios';
-
+import Image from "next/image";
+import connectinLogo from "../../public/ConnectIn icon.jpg";
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,6 +19,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useUser } from "@/context/UserContext";
+import { IKImage } from "imagekitio-next";
+
+
 
 type NavItem = {
   title: string
@@ -57,24 +62,28 @@ export function Navbar() {
   const pathname = usePathname()
   const [isSearchFocused, setIsSearchFocused] = React.useState(false)
 
-    const [profileImg, setProfileImg] = useState(
-      "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
-    );
+  //   const [profileImg, setProfileImg] = useState(
+  //     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
+  //   );
 
-  useEffect(() => {
-    const fetchUserDetail = async () => {
-      try {
-        const response = await axios.get('/api/user-detail'); // Request to Next.js API route
-       const imgurl =  response.data.detail.profile_image
-        setProfileImg(imgurl)
-      } catch (err) {
-        console.log(err)
-      } 
-    };
+  // useEffect(() => {
+  //   const fetchUserDetail = async () => {
+  //     try {
+  //       const response = await axios.get('/api/user-detail'); // Request to Next.js API route
+  //      const imgurl =  response.data.detail.profile_image
+  //       setProfileImg(imgurl)
+  //     } catch (err) {
+  //       console.log(err)
+  //     } 
+  //   };
 
-    fetchUserDetail();
-  }, []);
+  //   fetchUserDetail();
+  // }, []);
 
+    const { user }: any = useUser();
+    const userProfileImage = user?.profile_image;
+    const job = user?.work[0]?.job_title;
+    const fullName = `${user?.first_name} ${user?.last_name}`;
 
 
   return (
@@ -83,15 +92,17 @@ export function Navbar() {
       <div className="container flex h-14 items-center px-4 sm:px-6 max-w-[75%] mx-auto">
         <div className="flex items-center gap-3 md:gap-5">
           <Link href="/" className="flex items-center">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               className="h-8 w-8 text-blue-600"
               fill="currentColor"
             >
               <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-            </svg>
-            <span className="sr-only">LinkedIn</span>
+            </svg> */}
+            <img src="/ConnectIn icon.jpg" alt="ConnectIn Logo" className="h-8 w-8 rounded" />
+            {/* <Image src={connectinLogo} alt="ConnectIn Logo" width={8} height={8} /> */}
+            <span className="sr-only">ConnectIn</span>
           </Link>
 
           <div
@@ -171,14 +182,10 @@ export function Navbar() {
               <SheetContent side="right">
                 <div className="grid gap-6 py-6">
                   <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">John Doe</p>
+                    
+                      <p className="text-sm font-medium">{fullName}</p>
                       <p className="text-xs text-muted-foreground">View Profile</p>
-                    </div>
+                  
                   </div>
                   <nav className="grid gap-3">
                     {navItems.map((item) => (
@@ -209,21 +216,30 @@ export function Navbar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={profileImg} alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
+              <IKImage
+                src={userProfileImage}
+                alt="Profile Picture"
+                className="rounded-full object-cover"
+                width={32}
+                height={32}
+              />
+        
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="flex items-center gap-2 p-2">
-                <Avatar>
-                  <AvatarImage src={profileImg} alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
-                </Avatar>
                 <div>
-                  <p className="text-sm font-medium">John Doe</p>
-                  <p className="text-xs text-muted-foreground">Software Engineer</p>
+                <IKImage
+                src={userProfileImage}
+                alt="Profile Picture"
+                className="rounded-full object-cover"
+                width={32}
+                height={32}
+              />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">{fullName}</p>
+                  <p className="text-xs text-muted-foreground">{job}</p>
                 </div>
               </div>
               <DropdownMenuSeparator />

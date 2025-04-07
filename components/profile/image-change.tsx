@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Pencil, Trash2, X } from "lucide-react";
 import { IKUpload } from "imagekitio-next";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { IKImage } from "imagekitio-next";
 
@@ -23,14 +23,15 @@ interface ProfileImageOverlayProps {
 }
 
 export function ProfileImageOverlay({
-  isOpen,
+  isOpen = false,
   imageType,
-  onClose,
+  onClose = () => {},
   targetImage,
   onChangeImage,
   onDeleteImage,
 }: ProfileImageOverlayProps) {
-  if (!isOpen) return null;
+  const uploadRef = useRef<HTMLInputElement | null>(null);
+  
 
   const onError = (err: any) => {
     console.log("Error", err);
@@ -40,7 +41,7 @@ export function ProfileImageOverlay({
     console.log("Success", res);
 
     const values = res.url;
-    const target = imageType
+    const target = imageType;
 
     try {
       const response = await axios.post(
@@ -62,11 +63,24 @@ export function ProfileImageOverlay({
     onChangeImage();
   };
 
-  const uploadRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <Card className="w-full max-w-md">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <Card className="w-full max-w-md"
+       onClick={(e) => e.stopPropagation()}
+      >
         <CardHeader className="flex flex-row items-center justify-between p-4 space-y-0">
           <h3 className="text-lg font-medium">Profile Image</h3>
           <Button variant="ghost" size="icon" onClick={onClose}>
