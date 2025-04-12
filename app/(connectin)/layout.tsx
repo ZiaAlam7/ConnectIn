@@ -30,8 +30,10 @@ export default function RegistrationLayout({
 
   return (
     <>
+    <div className="bg-gray-50 min-h-screen pb-16">
         <Navbar/>
       <main>{children}</main>
+      </div>
     </>
   );
 }

@@ -11,7 +11,7 @@ import { setEngine } from "crypto";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import LoadingSpinner from "../ui/LoadingSpinner";
+import LoadiCngSpinner from "../ui/LoadingSpinner";
 
 const ProfileHeader = () => {
   const router = useRouter();
@@ -67,7 +67,7 @@ const ProfileHeader = () => {
     window.location.reload();
   };
 
-  if (!user) return <LoadingSpinner />;
+  // if (!user) return <LoadingSpinner />;
 
   return (
     <div className="bg-white shadow rounded-b-xl w-full ">

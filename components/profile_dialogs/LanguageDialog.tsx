@@ -4,18 +4,51 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import { useState } from "react";
+import axios from "axios";
 
 interface LanguageModalProps {
   isOpen?: boolean;
   onClose?: () => void;
+  name?: string;
+  level?: string
 }
 
 const LanguageModal: React.FC<LanguageModalProps> = ({
   isOpen = false,
   onClose = () => {},
+  name = "",
+  level = "",
 }) => {
-  const [language, setLanguage] = useState("");
-  const [proficiency, setProficiency] = useState("");
+  const [language, setLanguage] = useState(name);
+  const [proficiency, setProficiency] = useState(level);
+
+  const onAdd = async (res: any) => {
+    console.log("Success", res);
+
+    const values = {name: language.charAt(0).toUpperCase() + language.slice(1),
+      proficiency: proficiency
+    };
+    const target = "language";
+
+    try {
+      const response = await axios.post(
+        "/api/user-add",
+        { target, values },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Language save:", response.data);
+    } catch (error: any) {
+      console.error(
+        "Error while saving language:",
+        error.response?.data || error.message
+      );
+    }
+
+  };
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -23,6 +56,14 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    setLanguage(name);
+  }, [name]);
+
+  useEffect(() => {
+    setProficiency(level);
+  }, [level]);
 
   if (!isOpen) return null;
 
@@ -78,8 +119,9 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
             <button
               type="submit"
               className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+              onClick={onAdd}
             >
-              Save
+              Add
             </button>
           </div>
         </form>

@@ -1,5 +1,7 @@
-"use client";
+'use client';
 
+import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -17,6 +19,9 @@ type User = {
 };
 
 export default function LanguageSection() {
+
+  const router = useRouter();
+
   const { user } = useUser() as { user: User | null };
   const languages = user?.language ?? [];
 
@@ -29,9 +34,12 @@ export default function LanguageSection() {
   return (
     <>
       <Card className="w-full">
-      <LanguageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <LanguageModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
 
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardHeader className="flex  flex-row items-center justify-between pb-2">
           <h2 className="text-xl font-semibold">Languages</h2>
           <div className="flex items-center gap-2">
             <Button
@@ -42,17 +50,23 @@ export default function LanguageSection() {
             >
               <Plus className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Pencil className="h-4 w-4" />
+            <Button variant="ghost" size="icon" className="h-8 w-8"
+            onClick={() => router.push('/profile/languageUpdate')}
+            >
+              <Pencil className="h-4 w-4" 
+              
+              />
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 ">
           <div>
             {visibleLanguages.map((language, index) => (
               <div
-                key={language.name}
-                className={`px-6 py-4 ${index < visibleLanguages.length - 1 ? "border-b" : ""}`}
+                key={index}
+                className={`px-6 py-4 ${
+                  index < visibleLanguages.length - 1 ? "border-b" : ""
+                }`}
               >
                 <h3 className="font-medium">{language.name}</h3>
                 <p className="text-muted-foreground">{language.proficiency}</p>
@@ -65,6 +79,7 @@ export default function LanguageSection() {
               <Button
                 variant="ghost"
                 className="flex items-center gap-1 text-muted-foreground"
+                onClick={() => router.push('/profile/languageUpdate')}
               >
                 Show all {languages.length} languages
                 <ArrowRight className="h-4 w-4" />
@@ -73,9 +88,6 @@ export default function LanguageSection() {
           )}
         </CardContent>
       </Card>
-
-      
-     
     </>
   );
 }
