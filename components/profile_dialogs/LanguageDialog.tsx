@@ -10,7 +10,9 @@ interface LanguageModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   name?: string;
-  level?: string
+  level?: string;
+  langId?: string;
+  edit?: boolean;
 }
 
 const LanguageModal: React.FC<LanguageModalProps> = ({
@@ -18,37 +20,64 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
   onClose = () => {},
   name = "",
   level = "",
+  langId = "",
+  edit = false,
 }) => {
   const [language, setLanguage] = useState(name);
   const [proficiency, setProficiency] = useState(level);
 
-  const onAdd = async (res: any) => {
-    console.log("Success", res);
 
-    const values = {name: language.charAt(0).toUpperCase() + language.slice(1),
-      proficiency: proficiency
+  const onAdd = async (shouldRemove = false) => {
+   
+
+    const values = {
+      name: language.charAt(0).toUpperCase() + language.slice(1),
+      proficiency: proficiency,
     };
     const target = "language";
 
-    try {
-      const response = await axios.post(
-        "/api/user-add",
-        { target, values },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Language save:", response.data);
-    } catch (error: any) {
-      console.error(
-        "Error while saving language:",
-        error.response?.data || error.message
-      );
+    if (!edit) {
+      try {
+        const response = await axios.post(
+          "/api/user-add",
+          { target, values },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Language save:", response.data);
+      } catch (error: any) {
+        console.error(
+          "Error while saving language:",
+          error.response?.data || error.message
+        );
+      }
     }
 
+    if (edit) {
+      try {
+        const response = await axios.post(
+          "/api/user-edit",
+          { target, values, langId, remove:shouldRemove},
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Language save:", response.data);
+      } catch (error: any) {
+        console.error(
+          "Error while saving language:",
+          error.response?.data || error.message
+        );
+      }
+    }
   };
+
+  
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -77,7 +106,9 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Add language</h2>
+          <h2 className="text-2xl font-semibold">
+            {edit ? "Edit Langauge" : "Add Language"}
+          </h2>
           <button onClick={onClose}>
             <X className="w-6 h-6 text-gray-600 hover:text-black" />
           </button>
@@ -115,13 +146,26 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
             </select>
           </div>
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-between pt-2">
+            {edit && (
+              <button
+                type="submit"
+                className="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition"
+                onClick={() => {                 
+                  onAdd(true); 
+                }}
+              >
+                Delete
+              </button>
+            )}
             <button
               type="submit"
               className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-              onClick={onAdd}
+              onClick={() => {     
+                onAdd(false); 
+              }}
             >
-              Add
+              {edit ? "Save" : "Add"}
             </button>
           </div>
         </form>

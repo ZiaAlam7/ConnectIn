@@ -2,6 +2,8 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Users, Bookmark, Eye } from "lucide-react"
+import { IKImage } from "imagekitio-next";
+
 
 export default function ProfileSidebar() {
   return (
@@ -18,38 +20,17 @@ export default function ProfileSidebar() {
       </Card>
 
       {/* Dashboard */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="font-semibold mb-3">Your Dashboard</h3>
-          <p className="text-sm text-gray-500 mb-4">Private to you</p>
-
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
-            <div>
-              <p className="font-semibold">284</p>
-              <p className="text-xs text-gray-500">Profile views</p>
-            </div>
-            <div>
-              <p className="font-semibold">42</p>
-              <p className="text-xs text-gray-500">Post impressions</p>
-            </div>
-            <div>
-              <p className="font-semibold">18</p>
-              <p className="text-xs text-gray-500">Search appearances</p>
-            </div>
-          </div>
-
-          <div className="border-t pt-4">
-            <div className="flex items-center gap-2 text-sm mb-2">
-              <Bookmark className="h-4 w-4 text-gray-500" />
-              <span>My items</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Eye className="h-4 w-4 text-gray-500" />
-              <span>Who viewed your profile</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="p-1">
+        <IKImage
+                src={
+                  "https://ik.imagekit.io/ConnectIn/ConnectIn-ad.JPG?updatedAt=1744466100792"
+                }
+                alt="LinkedIn Ad"
+                className="w-full h-full object-cover rounded-xl"
+                width={500}
+                height={500}
+              />
+    </div>
 
       {/* People Also Viewed */}
       <Card>

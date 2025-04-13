@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation";
 import LanguageModal from "@/components/profile_dialogs/LanguageDialog"; // 👈 import modal
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
+import { isObjectIdOrHexString, ObjectId } from "mongoose";
 
 export default function LanguagesPage() {
   interface Language {
     name: string;
     proficiency: string;
+    _id: ObjectId
   }
 
   const router = useRouter();
@@ -20,7 +22,9 @@ export default function LanguagesPage() {
   const language: Language[] | undefined = user?.language;
   const [name, setName] = useState("");
   const [level, setLevel] = useState("");
-  console.log(name);
+  const [langId, setLangId] = useState("");
+  const [isEditing, setIsEditing] = useState(false)
+
 
   return (
     <Container>
@@ -37,7 +41,12 @@ export default function LanguagesPage() {
               </div>
               <button
                 className="text-gray-700 hover:text-black"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                setName("")
+                setLevel("")  
+                  setIsModalOpen(true)
+                
+                }}
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -59,6 +68,8 @@ export default function LanguagesPage() {
                       setIsModalOpen(true);
                       setName(lang.name);
                       setLevel(lang.proficiency);
+                      setLangId(lang._id.toString());
+                      setIsEditing(true)
                     }}
                   >
                     <Pencil className="w-4 h-4" />
@@ -86,9 +97,13 @@ export default function LanguagesPage() {
       </div>
       <LanguageModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {setIsModalOpen(false)
+          setIsEditing(false)
+        }}
         name={name}
         level={level}
+        edit={isEditing}
+        langId={langId}
       />
     </Container>
   );
