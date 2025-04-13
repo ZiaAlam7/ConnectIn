@@ -96,7 +96,7 @@ const userDetailSchema = new Schema<IUserDetail>(
       default: "/placeholder.svg?height=400&width=1200",
     },
     about: { type: String },
-    skill: [{ type: String }],
+    skill: [{ type: String}],
     language: [LanguageSchema]
   },
   { timestamps: true }

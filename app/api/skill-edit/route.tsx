@@ -1,8 +1,8 @@
-import  connectToDatabase from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import UserDetail from "@/models/UserDetail.model";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth_options"; 
+import { authOptions } from "@/lib/auth_options";
 import mongoose, { QueryOptions } from "mongoose";
 
 export async function POST(request: NextRequest) {
@@ -13,45 +13,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-   
-    const email = session.user.email; 
-    console.log(email)
+    const email = session.user.email;
+    console.log(email);
 
-    const  {target, values, langId, remove}  = await request.json();
-
-    remove ? console.log("remove is true") : console.log("Remvoe is false")
-
+    const { target, values, remove, skillIndex } = await request.json();
 
     await connectToDatabase();
 
-
     let updateQuery = {};
     let options: QueryOptions = { new: true };
-    
+
     if (remove) {
-    
       updateQuery = {
         $pull: {
-          [target]: { _id: langId }
-        }
+          [target]: values,
+        },
       };
     } else {
-      
-      updateQuery = {
-        $set: {
-          [`${target}.$[elem].name`]: values.name,
-          [`${target}.$[elem].proficiency`]: values.proficiency
-        }
-      };
-      options.arrayFilters = [{ "elem._id": langId }];
+      updateQuery = { $addToSet: { [`${target}.${skillIndex}`]: values } };
     }
-    
+
     const User = await UserDetail.findOneAndUpdate(
       { email: email },
       updateQuery,
       options
     );
-      
 
     if (!User) {
       return NextResponse.json(
@@ -66,7 +52,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to Add Details" },
+      { error: "Failed to updated skill" },
       { status: 500 }
     );
   }

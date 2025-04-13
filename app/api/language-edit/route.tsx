@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import UserDetail from "@/models/UserDetail.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth_options"; 
+import mongoose, { QueryOptions } from "mongoose";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,21 +17,43 @@ export async function POST(request: NextRequest) {
     const email = session.user.email; 
     console.log(email)
 
-    const  {target, values}  = await request.json();
+    const  {target, values, langId, remove}  = await request.json();
+
+    remove ? console.log("remove is true") : console.log("Remvoe is false")
+
 
     await connectToDatabase();
-    
-  
-    const updatedUser = await UserDetail.findOneAndUpdate(
-      { email : email}, 
-      {
-        $addToSet:{
-           [target] : values
-        }, 
-      }
-    );
 
-    if (!updatedUser) {
+
+    let updateQuery = {};
+    let options: QueryOptions = { new: true };
+    
+    if (remove) {
+    
+      updateQuery = {
+        $pull: {
+          [target]: { _id: langId }
+        }
+      };
+    } else {
+      
+      updateQuery = {
+        $addToSet: {
+          [`${target}.$[elem].name`]: values.name,
+          [`${target}.$[elem].proficiency`]: values.proficiency
+        }
+      };
+      options.arrayFilters = [{ "elem._id": langId }];
+    }
+    
+    const User = await UserDetail.findOneAndUpdate(
+      { email: email },
+      updateQuery,
+      options
+    );
+      
+
+    if (!User) {
       return NextResponse.json(
         { error: "User does not exists" },
         { status: 404 }
@@ -43,7 +66,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to Add Details" },
+      { error: "Failed to updated language" },
       { status: 500 }
     );
   }

@@ -28,7 +28,6 @@ export default function LanguageSection() {
   const visibleLanguages = languages.slice(0, 2);
   const hasMoreLanguages = languages.length > 2;
 
-  // 👇 modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -46,7 +45,7 @@ export default function LanguageSection() {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => setIsModalOpen(true)} // 👈 open modal
+              onClick={() => setIsModalOpen(true)} 
             >
               <Plus className="h-5 w-5" />
             </Button>
