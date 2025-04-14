@@ -6,7 +6,7 @@ import { Plus, Pencil, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { useState } from "react";
-import SkillModal from "../profile_dialogs/SkillDialog";
+import SkillModal from "../profile_modals/SkillModal";
 
 type User = {
   skill: string[];

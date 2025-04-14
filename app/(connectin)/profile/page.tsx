@@ -4,7 +4,6 @@ import AboutSection from "@/components/profile/about-section"
 import ActivitySection from "@/components/profile/activity-section"
 import ExperienceSection from "@/components/profile/experience-section"
 import EducationSection from "@/components/profile/education-section"
-import CertificationsSection from "@/components/profile/certifications-section"
 import SkillsSection from "@/components/profile/skills-section"
 import LanguagesSection from "@/components/profile/languages-section"
 import ProfileSidebar from "@/components/profile/profile-sidebar"
@@ -38,11 +37,8 @@ export default function ProfilePage() {
             <ActivitySection />
             <ExperienceSection />
             <EducationSection />
-            <CertificationsSection />
             <SkillsSection />
             <LanguagesSection/>
-
-            
           </div>
           <div className="lg:col-span-1">
             <ProfileSidebar />

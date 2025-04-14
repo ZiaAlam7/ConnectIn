@@ -17,7 +17,8 @@ export async function POST(request: NextRequest) {
     console.log(email)
 
     const  {target, values}  = await request.json();
-
+console.log(target)
+console.log(values)
     await connectToDatabase();
     
   

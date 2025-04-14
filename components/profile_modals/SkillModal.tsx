@@ -6,35 +6,30 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
 
-interface LanguageModalProps {
+interface SkillModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   name?: string;
-  level?: string;
-  langId?: string;
   edit?: boolean;
+  skillIndex?: number;
 }
 
-const LanguageModal: React.FC<LanguageModalProps> = ({
+const SkillModal: React.FC<SkillModalProps> = ({
   isOpen = false,
   onClose = () => {},
   name = "",
-  level = "",
-  langId = "",
   edit = false,
+  skillIndex,
 }) => {
-  const [language, setLanguage] = useState(name);
-  const [proficiency, setProficiency] = useState(level);
+  const [skill, setSkill] = useState(name);
+
 
 
   const onAdd = async (shouldRemove = false) => {
    
 
-    const values = {
-      name: language.charAt(0).toUpperCase() + language.slice(1),
-      proficiency: proficiency,
-    };
-    const target = "language";
+    const values = skill
+    const target = "skill";
 
     if (!edit) {
       try {
@@ -47,10 +42,10 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
             },
           }
         );
-        console.log("Language save:", response.data);
+        console.log("Skill save:", response.data);
       } catch (error: any) {
         console.error(
-          "Error while saving language:",
+          "Error while saving skill:",
           error.response?.data || error.message
         );
       }
@@ -59,18 +54,18 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
     if (edit) {
       try {
         const response = await axios.post(
-          "/api/user-edit",
-          { target, values, langId, remove:shouldRemove},
+          "/api/skill-edit",
+          { target, values ,skillIndex , remove:shouldRemove},
           {
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
-        console.log("Language save:", response.data);
+        console.log("Skill save:", response.data);
       } catch (error: any) {
         console.error(
-          "Error while saving language:",
+          "Error while saving skill:",
           error.response?.data || error.message
         );
       }
@@ -87,12 +82,10 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
-    setLanguage(name);
+    setSkill(name);
   }, [name]);
 
-  useEffect(() => {
-    setProficiency(level);
-  }, [level]);
+
 
   if (!isOpen) return null;
 
@@ -107,7 +100,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">
-            {edit ? "Edit Langauge" : "Add Language"}
+            {edit ? "Edit Skill" : "Add Skill"}
           </h2>
           <button onClick={onClose}>
             <X className="w-6 h-6 text-gray-600 hover:text-black" />
@@ -117,34 +110,17 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
         <form className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">
-              Language <span className="text-red-500">*</span>
+              Skill <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--mainGreen)]"
+              value={skill}
+              onChange={(e) => setSkill(e.target.value)}
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Proficiency
-            </label>
-            <select
-              className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-              value={proficiency}
-              onChange={(e) => setProficiency(e.target.value)}
-            >
-              <option value="">Please select</option>
-              <option value="Elementary">Elementary</option>
-              <option value="Limited Working">Limited Working</option>
-              <option value="Professional Working">Professional Working</option>
-              <option value="Full Professional">Full Professional</option>
-              <option value="Native or Bilingual">Native or Bilingual</option>
-            </select>
-          </div>
 
           <div className="flex justify-between pt-2">
             {edit && (
@@ -160,7 +136,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
             )}
             <button
               type="submit"
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+              className="bg-[var(--mainGreen)] text-white px-5 py-2 rounded-lg hover:bg-[var(--mainGreenDark)] transition"
               onClick={() => {     
                 onAdd(false); 
               }}
@@ -174,4 +150,4 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
   );
 };
 
-export default LanguageModal;
+export default SkillModal;

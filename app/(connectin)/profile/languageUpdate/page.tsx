@@ -4,7 +4,7 @@ import { Pencil, Plus, ArrowLeft } from "lucide-react";
 import { IKImage } from "imagekitio-next";
 import { Container } from "@/components/layout/container";
 import { useRouter } from "next/navigation";
-import LanguageModal from "@/components/profile_dialogs/LanguageDialog"; // 👈 import modal
+import LanguageModal from "@/components/profile_modals/LanguageModal"; // 👈 import modal
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { isObjectIdOrHexString, ObjectId } from "mongoose";

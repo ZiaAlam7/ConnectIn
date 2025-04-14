@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Plus, Pencil, ArrowRight } from "lucide-react";
 import { useUser } from "@/context/UserContext";
-import LanguageModal from "@/components/profile_dialogs/LanguageDialog"; // 👈 import modal
+import LanguageModal from "@/components/profile_modals/LanguageModal"; 
 
 interface Language {
   name: string;

@@ -4,7 +4,7 @@ import { Pencil, Plus, ArrowLeft } from "lucide-react";
 import { IKImage } from "imagekitio-next";
 import { Container } from "@/components/layout/container";
 import { useRouter } from "next/navigation";
-import SkillModal from "@/components/profile_dialogs/SkillDialog";
+import SkillModal from "@/components/profile_modals/SkillModal";
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { isObjectIdOrHexString, ObjectId } from "mongoose";

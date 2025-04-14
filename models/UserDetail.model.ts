@@ -13,16 +13,21 @@ export interface IEducation {
   start_month: string;
   end_year: string;
   end_month: string;
+  description: string;
 }
 
 export interface IWork {
   job_title: string;
   company_name: string;
   employment_type: string;
+  city: string;
+  country: string;
   start_year: string;
   start_month: string;
   end_year: string;
   end_month: string;
+  description: string
+
 }
 export interface ILanguage {
   name: string;
@@ -60,16 +65,20 @@ const EducationSchema = new Schema<IEducation>({
   start_year: { type: String },
   end_month: { type: String },
   end_year: { type: String },
+  description: { type: String },
 });
 
 const WorkSchema = new Schema<IWork>({
   job_title: { type: String },
   company_name: { type: String },
   employment_type: { type: String },
+  city: { type: String },
+  country: { type: String },
   start_month: { type: String },
   start_year: { type: String },
   end_month: { type: String },
   end_year: { type: String },
+  description: { type: String },
 });
 
 const LanguageSchema = new Schema<ILanguage>({
