@@ -5,9 +5,8 @@ import { X } from "lucide-react";
 import axios from "axios";
 import TypeaheadInput from "./TypeaheadInputModal";
 import Dropdown from "./DropdownModal";
-import { education } from '@/constants/educationConstants'; 
+import { education } from "@/constants/educationConstants";
 import { dateConstants } from "@/constants/dateConstants";
-
 
 type EducationModalProps = {
   isOpen?: boolean;
@@ -20,10 +19,11 @@ type EducationModalProps = {
   e_year?: string;
   e_month?: string;
   desc?: string;
+  targetId?: string;
   edit?: boolean;
 };
 
-export default function EducationModal({
+const EducationModal: React.FC<EducationModalProps> = ({
   isOpen = false,
   onClose = () => {},
   school = "",
@@ -34,9 +34,10 @@ export default function EducationModal({
   e_year = "",
   e_month = "",
   desc = "",
+  targetId = "",
   edit = false,
-}: EducationModalProps) {
-  const [institute, setInstitute] = useState(school);
+}) => {
+  const [institute, setInstitute] = useState('');
   const [degree_type, setDegree_type] = useState(degree);
   const [subject, setSubject] = useState(field);
   const [start_year, setStart_year] = useState(s_year);
@@ -45,22 +46,6 @@ export default function EducationModal({
   const [end_month, setEnd_month] = useState(e_month);
   const [description, setDescription] = useState(desc);
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const years = Array.from({ length: 2030 - 1925 + 1 }, (_, i) => 1925 + i);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -69,6 +54,20 @@ export default function EducationModal({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    setInstitute(school);
+    setDegree_type(degree);
+    setSubject(field);
+    setStart_year(s_year);
+    setStart_month(s_month);
+    setEnd_year(e_year);
+    setEnd_month(e_month);
+    setDescription(desc);
+  }, [school, degree, field, s_year, s_month, e_year, e_month, desc]);
+
+  
+ 
+  
   const onAdd = async (shouldRemove = false) => {
     const values = {
       institute: institute,
@@ -93,34 +92,36 @@ export default function EducationModal({
             },
           }
         );
-        console.log("Language save:", response.data);
+        onClose(); 
+        console.log("Education Save:", response.data);
       } catch (error: any) {
         console.error(
-          "Error while saving language:",
+          "Error while saving Education:",
           error.response?.data || error.message
         );
       }
     }
 
-    // if (edit) {
-    //   try {
-    //     const response = await axios.post(
-    //       "/api/user-edit",
-    //       { target, values, langId, remove: shouldRemove },
-    //       {
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       }
-    //     );
-    //     console.log("Language save:", response.data);
-    //   } catch (error: any) {
-    //     console.error(
-    //       "Error while saving language:",
-    //       error.response?.data || error.message
-    //     );
-    //   }
-    // }
+    if (edit) {
+      try {
+        const response = await axios.post(
+          "/api/profile-edit",
+          { target, values, targetId, remove: shouldRemove },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        onClose();
+        console.log("Education save:", response.data);
+      } catch (error: any) {
+        console.error(
+          "Error while saving Education:",
+          error.response?.data || error.message
+        );
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -152,6 +153,7 @@ export default function EducationModal({
               options={education.institutes}
               required={true}
               onSelect={(value) => setInstitute(value)}
+              values={institute}
             />
           </div>
 
@@ -161,6 +163,7 @@ export default function EducationModal({
               placeholder={"Ex: Bachelor's"}
               options={education.degreeTypes}
               onSelect={(value) => setDegree_type(value)}
+              values={degree_type}
             />
           </div>
 
@@ -170,31 +173,27 @@ export default function EducationModal({
               placeholder={"Ex: Computer Science"}
               options={education.subjects}
               onSelect={(value) => setSubject(value)}
+              values={subject}
             />
           </div>
-<div>
-
-
-</div>
+          <div></div>
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium">Start date</label>
               <div className="flex gap-2">
-              <Dropdown
-        options={dateConstants.months}
-        selected={start_month}
-        onChange={(value) => setStart_month(value)}
-        placeholder="Month"
-      />
-               
-              <Dropdown
-        options={dateConstants.years}
-        selected={start_year}
-        onChange={(value) => setStart_year(value)}
-        placeholder="Year"
+                <Dropdown
+                  options={dateConstants.months}
+                  selected={start_month}
+                  onChange={(value) => setStart_month(value)}
+                  placeholder="Month"
+                />
 
-      />
-               
+                <Dropdown
+                  options={dateConstants.years}
+                  selected={start_year}
+                  onChange={(value) => setStart_year(value)}
+                  placeholder="Year"
+                />
               </div>
             </div>
 
@@ -203,18 +202,18 @@ export default function EducationModal({
                 End date (or expected)
               </label>
               <div className="flex gap-2">
-              <Dropdown
-        options={dateConstants.months}
-        selected={end_month}
-        onChange={(value) => setEnd_month(value)}
-        placeholder="Month"
-      />
-               <Dropdown
-        options={dateConstants.years}
-        selected={end_year}
-        onChange={(value) => setEnd_year(value)}
-        placeholder="Year"
-      />
+                <Dropdown
+                  options={dateConstants.months}
+                  selected={end_month}
+                  onChange={(value) => setEnd_month(value)}
+                  placeholder="Month"
+                />
+                <Dropdown
+                  options={dateConstants.years}
+                  selected={end_year}
+                  onChange={(value) => setEnd_year(value)}
+                  placeholder="Year"
+                />
               </div>
             </div>
           </div>
@@ -229,7 +228,7 @@ export default function EducationModal({
             ></textarea>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-between">
             {edit && (
               <button
                 type="submit"
@@ -256,3 +255,6 @@ export default function EducationModal({
     </div>
   );
 }
+
+
+export default EducationModal;

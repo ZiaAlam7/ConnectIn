@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import LanguageModal from "@/components/profile_modals/LanguageModal"; // 👈 import modal
 import { useState } from "react";
 import { useUser } from "@/context/UserContext";
-import { isObjectIdOrHexString, ObjectId } from "mongoose";
+import { ObjectId } from "mongoose";
 
 export default function LanguagesPage() {
   interface Language {
@@ -22,7 +22,7 @@ export default function LanguagesPage() {
   const language: Language[] | undefined = user?.language;
   const [name, setName] = useState("");
   const [level, setLevel] = useState("");
-  const [langId, setLangId] = useState("");
+  const [targetId, setTargetId] = useState("");
   const [isEditing, setIsEditing] = useState(false)
 
 
@@ -68,7 +68,7 @@ export default function LanguagesPage() {
                       setIsModalOpen(true);
                       setName(lang.name);
                       setLevel(lang.proficiency);
-                      setLangId(lang._id.toString());
+                      setTargetId(lang._id.toString());
                       setIsEditing(true)
                     }}
                   >
@@ -103,7 +103,7 @@ export default function LanguagesPage() {
         name={name}
         level={level}
         edit={isEditing}
-        langId={langId}
+        targetId={targetId}
       />
     </Container>
   );

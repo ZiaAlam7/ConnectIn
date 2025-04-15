@@ -11,7 +11,7 @@ interface LanguageModalProps {
   onClose?: () => void;
   name?: string;
   level?: string;
-  langId?: string;
+  targetId?: string;
   edit?: boolean;
 }
 
@@ -20,7 +20,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
   onClose = () => {},
   name = "",
   level = "",
-  langId = "",
+  targetId = "",
   edit = false,
 }) => {
   const [language, setLanguage] = useState(name);
@@ -59,8 +59,8 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
     if (edit) {
       try {
         const response = await axios.post(
-          "/api/user-edit",
-          { target, values, langId, remove:shouldRemove},
+          "/api/profile-edit",
+          { target, values, targetId, remove:shouldRemove},
           {
             headers: {
               "Content-Type": "application/json",

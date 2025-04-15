@@ -8,6 +8,7 @@ interface TypeaheadInputProps {
   options: string[];
   onSelect?: (value: string) => void;
   required?: boolean;
+  values?: string
 }
 
 const TypeaheadInput: React.FC<TypeaheadInputProps> = ({
@@ -16,8 +17,9 @@ const TypeaheadInput: React.FC<TypeaheadInputProps> = ({
   options,
   onSelect,
   required,
+  values
 }) => {
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState(values);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -48,7 +50,12 @@ const TypeaheadInput: React.FC<TypeaheadInputProps> = ({
     setHighlightedIndex(-1);
     if (onSelect) onSelect(value);
   };
-
+  
+  useEffect(() => {
+    setInputValue(values || "");
+  }, [values]);
+  
+ 
   const ARROW_KEY_DELAY = 100; // ms
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

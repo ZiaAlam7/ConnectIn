@@ -25,11 +25,12 @@ export default function SkillsSection() {
 
   return (
     <>
+   
+    <Card className="w-full">
     <SkillModal
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
             />
-    <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <h2 className="text-xl font-semibold">Skills</h2>
         <div className="flex items-center gap-2">

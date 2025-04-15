@@ -1,8 +1,8 @@
-import  connectToDatabase from "@/lib/mongodb";
+import connectToDatabase from "@/lib/mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import UserDetail from "@/models/UserDetail.model";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth_options"; 
+import { authOptions } from "@/lib/auth_options";
 import mongoose, { QueryOptions } from "mongoose";
 
 export async function POST(request: NextRequest) {
@@ -13,45 +13,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-   
-    const email = session.user.email; 
-    console.log(email)
+    const email = session.user.email;
 
-    const  {target, values, langId, remove}  = await request.json();
+    const { target, values, targetId, remove } = await request.json();
 
-    remove ? console.log("remove is true") : console.log("Remvoe is false")
-
+console.log(remove)
+console.log(target)
+console.log(values)
 
     await connectToDatabase();
 
-
     let updateQuery = {};
     let options: QueryOptions = { new: true };
-    
+
     if (remove) {
-    
       updateQuery = {
         $pull: {
-          [target]: { _id: langId }
-        }
+          [target]: { _id: targetId },
+        },
       };
     } else {
-      
+      const addToSetData: Record<string, any> = {};
+
+      for (const key in values) {
+        addToSetData[`${target}.$[elem].${key}`] = values[key];
+      }
+
       updateQuery = {
-        $addToSet: {
-          [`${target}.$[elem].name`]: values.name,
-          [`${target}.$[elem].proficiency`]: values.proficiency
-        }
+        $set: addToSetData, // You could also use $addToSet, depending on what you're updating
       };
-      options.arrayFilters = [{ "elem._id": langId }];
+
+      options.arrayFilters = [{ "elem._id": targetId }];
     }
-    
+
     const User = await UserDetail.findOneAndUpdate(
       { email: email },
       updateQuery,
       options
     );
-      
 
     if (!User) {
       return NextResponse.json(
