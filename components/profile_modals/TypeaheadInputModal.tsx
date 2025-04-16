@@ -42,6 +42,7 @@ const TypeaheadInput: React.FC<TypeaheadInputProps> = ({
       setShowDropdown(true);
       setHighlightedIndex(0);
     }
+    onSelect?.(value);
   };
 
   const handleSelect = (value: string) => {

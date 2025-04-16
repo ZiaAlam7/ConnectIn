@@ -157,9 +157,9 @@ const ProfileHeader = () => {
         {/* User Info */}
         <div className="mt-16">
           <h1 className="text-2xl font-bold">{fullName}</h1>
-          <h2 className="text-lg text-gray-700">
-            {job} at {company}
-          </h2>
+      {job && <h2 className="text-lg text-gray-700">
+        {job} at {company}
+      </h2>}
           <div className="flex items-center text-sm text-gray-500 mt-1">
             <span>
               {country}, {city}
