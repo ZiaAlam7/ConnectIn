@@ -14,16 +14,6 @@ import { useUser } from "@/context/UserContext";
 export default function ProfilePage() {
   const { user }: any = useUser();
 
-  const skill = user?.skill;
-  const language = user?.language;
-
-  console.log(language)
-  // const country = user?.address?.country;
-  // const city = user?.address?.city;
-  // const job = user?.work[0]?.job_title;
-  // const company = user?.work[0]?.company_name;
-
-
   
   return (
    

@@ -79,7 +79,7 @@ export default function LanguagesPage() {
             </div>
           </div>
 
-          {/* Right Column - Sidebar Image */}
+          
           <div className="hidden lg:block">
             <div className="rounded-xl overflow-hidden shadow">
               <IKImage

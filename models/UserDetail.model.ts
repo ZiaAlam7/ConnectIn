@@ -38,6 +38,7 @@ export interface IUserDetail {
   user_id: string;
   first_name: string;
   last_name: string;
+  headline: string;
   email: string;
   address: IAddress;
   education: IEducation[];
@@ -91,6 +92,7 @@ const userDetailSchema = new Schema<IUserDetail>(
     user_id: { type: String, required: true },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
+    headline: { type: String },
     email: { type: String, required: true, unique: true },
     address: { type: AddressSchema },
     education: [EducationSchema],
@@ -102,7 +104,7 @@ const userDetailSchema = new Schema<IUserDetail>(
     },
     cover_image: {
       type: String,
-      default: "/placeholder.svg?height=400&width=1200",
+      default: "https://ik.imagekit.io/ConnectIn/placeholder.svg?updatedAt=1743836732290",
     },
     about: { type: String },
     skill: [{ type: String}],

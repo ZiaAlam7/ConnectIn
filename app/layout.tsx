@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import logo from "../../public/Connectin_logo.png";
 import IKProvider from "@/components/imageKit/IKProvider";
 import { UserProvider } from "@/context/UserContext";
+import { PostProvider } from "@/context/PostContext";
 import Image from "next/image";
 import AppLoader from "./AppLoader";
 
@@ -39,11 +40,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <PostProvider>
          <UserProvider>
         <IKProvider>
         <AppLoader>{children}</AppLoader>
         </IKProvider>
         </UserProvider>
+        </PostProvider>
 
         <Toaster />
       </body>

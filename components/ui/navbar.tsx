@@ -33,7 +33,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     title: "Home",
-    href: "/",
+    href: "/home",
     icon: Home,
   },
   {

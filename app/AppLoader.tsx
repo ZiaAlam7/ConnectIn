@@ -10,7 +10,7 @@ export default function AppLoader({
 }) {
   const { user } = useUser();
 
-  if (!user) return <LoadingSpinner />;
+  // if (!user) return <LoadingSpinner />;
 
   return <>{children}</>;
 }
