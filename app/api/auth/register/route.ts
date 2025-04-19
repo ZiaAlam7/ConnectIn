@@ -14,6 +14,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const capitalize = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const full_name = `${capitalize(first_name)} ${capitalize(last_name)}`;
+
     await connectToDatabase();
     // localStorage.setItem("userEmail", JSON.stringify(email));
     const existingUser = await UserAuth.findOne({ email });
@@ -28,9 +33,9 @@ export async function POST(request: NextRequest) {
     const userAuth = await UserAuth.create({
       first_name,
       last_name,
+      full_name,
       email,
       password,
-      
     });
 
     await UserDetail.create({
@@ -38,6 +43,7 @@ export async function POST(request: NextRequest) {
       email,
       first_name,
       last_name,
+      full_name,
     });
 
     const newUser = await UserAuth.findOne({ email });

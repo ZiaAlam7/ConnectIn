@@ -1,17 +1,13 @@
 "use client";
-import React, { AnyActionArg, useEffect, useState } from "react";
-import Image from "next/image";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, CameraIcon, PlusIcon } from "lucide-react";
 import { ProfileImageOverlay } from "./image-change";
 import { IKImage } from "imagekitio-next";
-import UserDetail from "@/models/UserDetail.model";
-import { useSession } from "next-auth/react";
-import { setEngine } from "crypto";
+import { useSession } from "next-auth/react";;
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import LoadiCngSpinner from "../ui/LoadingSpinner";
 
 const ProfileHeader = () => {
   const router = useRouter();
@@ -81,13 +77,6 @@ const ProfileHeader = () => {
         onDeleteImage={handleDeleteImage}
       />
       <div className="relative h-60 w-full">
-        {/* <Image
-          src={userCoverImage}
-          alt="Cover Image"
-          className="object-cover w-full h-full rounded-t-xl"
-          width={1200}
-          height={400}
-        /> */}
         <IKImage
           src={userCoverImage}
           alt="Profile Picture"
@@ -113,13 +102,6 @@ const ProfileHeader = () => {
         {/* Profile Picture */}
         <div className="absolute -top-20 left-6 border-4 border-white rounded-full shadow-xl sm:left-8">
           <div className="relative">
-            {/* <Image
-              src="/zz.jpg?height=160&width=160"
-              alt="Profile Picture"
-              className="rounded-full object-cover"
-              width={160}
-              height={160}
-            /> */}
             <IKImage
               src={userProfileImage}
               alt="Profile Picture"

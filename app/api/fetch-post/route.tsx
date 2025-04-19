@@ -17,8 +17,11 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase();
    
-    const allPosts = await Post.find();
-console.log(allPosts)
+    const allPosts = await Post.find()
+    .populate('userId', 'full_name headline profile_image') // post's author
+    .populate('comments.userId', 'full_name headline profile_image'); // comment authors
+  
+
     if (!allPosts) {
       return NextResponse.json(
         { error: "No post availabe" },

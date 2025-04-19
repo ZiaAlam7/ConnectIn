@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useUser } from "@/context/UserContext";
 import { IKImage } from "imagekitio-next";
+import { signOut } from "next-auth/react";
 
 
 
@@ -83,8 +84,16 @@ export function Navbar() {
     const { user }: any = useUser();
     const userProfileImage = user?.profile_image;
     const job = user?.work[0]?.job_title;
-    const fullName = `${user?.first_name} ${user?.last_name}`;
+    const fullName = user?.full_name;
 
+
+   
+
+    const handleLogout = () => {
+      signOut({
+        callbackUrl: "/login", // Redirect to home or login page after logout
+      });
+    };
 
   return (
     
@@ -203,7 +212,9 @@ export function Navbar() {
                     ))}
                   </nav>
                   <div className="border-t pt-4">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start"
+                    onClick={handleLogout}
+                    >
                       Sign Out
                     </Button>
                   </div>
@@ -256,7 +267,7 @@ export function Navbar() {
                 <Link href="/language">Language</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Sign Out</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Sign Out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

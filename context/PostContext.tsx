@@ -5,39 +5,55 @@ import axios from "axios";
 
 
 
-// Define the User type (customize it based on your API response)
-type Post = {
-  id: string;
-  name: string;
-  email: string;
-  profileImage: string;
-};
-
-// Define the Context Type
-interface PostContextType {
-  post: Post | null;
-  setPost: (user: Post | null) => void;
-
+export interface User {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  profile_image: string;
 }
 
-// Create Context (default value is null)
+export interface Comment {
+  _id: string;
+  text: string;
+  userId: User;
+  createdAt: string;
+}
+
+export interface Post {
+  _id: string;
+  content: string;
+  image: string;
+  userId: User;
+  likes: string[];
+  comments: Comment[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+export interface PostContextType {
+  post: Post | null;
+  setPost: (post: Post | null) => void;
+}
+
+
+
 const PostContext = createContext<PostContextType | undefined>(undefined);
 
-// Provider Component
+
 export const PostProvider = ({ children }: { children: ReactNode }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user data when the app loads
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await axios.get("/api/fetch-post");
-        const data: Post = res.data.allPosts; // Adjust this based on your API structure
-        console.log("asdasd")
+        const data: Post = res.data.allPosts; 
         setPost(data);
       } catch (error) {
-        console.error("Failed to fetch user:", error);
+        console.error("Failed to fetch post post_context:", error);
       } 
     };
   
@@ -51,11 +67,11 @@ export const PostProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom Hook to Access Context
+
 export const usePost = (): PostContextType => {
   const context = useContext(PostContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error("usePost must be used within a PostProvider");
   }
   return context;
 };

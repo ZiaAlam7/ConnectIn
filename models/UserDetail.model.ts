@@ -38,6 +38,7 @@ export interface IUserDetail {
   user_id: string;
   first_name: string;
   last_name: string;
+  full_name: string;
   headline: string;
   email: string;
   address: IAddress;
@@ -92,6 +93,7 @@ const userDetailSchema = new Schema<IUserDetail>(
     user_id: { type: String, required: true },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
+    full_name: { type: String, required: true },
     headline: { type: String },
     email: { type: String, required: true, unique: true },
     address: { type: AddressSchema },
