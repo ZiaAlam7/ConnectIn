@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     console.log(target);
     console.log(values);
     console.log(postId);
+
     await connectToDatabase();
 
     if(target === 'new post')
@@ -44,6 +45,48 @@ export async function POST(request: NextRequest) {
      }
    } catch (error) {
     console.error("Error while adding comment:", error);
+   }
+
+
+   try {
+    if(target === 'like'){
+     await Post.findByIdAndUpdate(postId, {
+       $addToSet: {
+         likes: values.userId
+       }
+     });
+     await UserDetail.findOneAndUpdate(
+      {email},
+      {
+       $addToSet: {
+         liked: postId
+       }
+     })
+    }
+    console.log("Liked")
+   } catch (error) {
+    console.error("Error while liking the post:", error);
+   }
+
+
+   try {
+    if(target === 'unlike'){
+     await Post.findByIdAndUpdate(postId, {
+       $pull: {
+         likes: values.userId
+       }
+     });
+     await UserDetail.findOneAndUpdate(
+      {email},
+      {
+       $pull: {
+         liked: postId
+       }
+     })
+    }
+ console.log("Unliked")
+   } catch (error) {
+    console.error("Error while unliking the post:", error);
    }
 
     // if (!newPost) {
