@@ -13,6 +13,9 @@ import { useState } from "react";
 import axios from "axios";
 import { Playwrite_BE_VLG } from "next/font/google";
 
+import { MoreVertical } from "lucide-react";
+import { useRef, useEffect } from "react";
+
 export interface User {
   _id: string;
   first_name: string;
@@ -44,21 +47,48 @@ export interface PostListProps {
 
 export default function PostList() {
   const { user, setUser }: any = useUser();
-  const user_id = user?._id;
+  const userId = user?._id;
   const PostUserLiked = user?.liked;
   const { post, setPost }: any = usePost();
 
-  const [commentPostId, setCommentPostId] = useState();
+
+  const [commentPostId, setCommentPostId]: any = useState();
   const [likePostId, setLikePostId] = useState();
   const [commentText, setCommentText] = useState("");
 
-  if (!post || !Array.isArray(post)) {
-    return <p className="text-center">No posts to show.</p>;
+  const [menuOpenPostId, setMenuOpenPostId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+
+// Function to calculate the time ago a post or comment was made
+function getTimeAgo(dateString: string): string {
+  const createdAt = new Date(dateString);
+  const now = new Date();
+  const diffInMs = now.getTime() - createdAt.getTime();
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+  if (diffInMinutes < 1) {
+    return "Just now";
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
   }
 
+  const diffInHours = Math.floor(diffInMinutes / 60);
+
+  if (diffInHours < 24) {
+    return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+}
+
+
+
   const handleComment = async () => {
+
     const values = {
-      userId: user_id,
+      userId: userId,
       text: commentText,
     };
     const target = "comments";
@@ -83,12 +113,13 @@ export default function PostList() {
         createdAt: new Date().toISOString(),
       };
 
-      const updatedPosts = post.map((p) =>
+      const updatedPosts = post.map((p: PostType) =>
         p._id === postId ? { ...p, comments: [...p.comments, newComment] } : p
       );
 
       setPost(updatedPosts);
       setCommentText("");
+
     } catch (error: any) {
       console.error(
         "Error while adding comment:",
@@ -99,9 +130,8 @@ export default function PostList() {
 
   const handleLike = async (postId: string, target: string) => {
     const values = {
-      userId: user_id,
+      userId: userId,
     };
-    console.log("clientside ", postId);
 
     try {
       const response = await axios.post(
@@ -115,16 +145,15 @@ export default function PostList() {
       );
       console.log("Post Liked:", response.data);
 
-
       // Like and Unlike Local Update the Posts
-      const updatedPosts = post.map((p) =>
+      const updatedPosts = post.map((p: PostType) =>
         p._id === postId
           ? {
               ...p,
               likes:
                 target === "like"
-                  ? [...p.likes, user_id]
-                  : p.likes.filter((id: string) => id !== user_id),
+                  ? [...p.likes, userId]
+                  : p.likes.filter((id: string) => id !== userId),
             }
           : p
       );
@@ -148,14 +177,58 @@ export default function PostList() {
     }
   };
 
+  const handleDeletePost = async (postId: string) => {
+    console.log(postId);
+
+    try {
+      await axios.post(
+        "/api/post-post",
+        { target: "delete post", postId, userId },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+
+      // Update the context immediately
+      const updatedPosts = post.filter((p: PostType) => p._id !== postId);
+      setPost(updatedPosts);
+      setMenuOpenPostId(null);
+      console.log("Post deleted");
+    } catch (error: any) {
+      console.error(
+        "Error deleting post:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpenPostId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  if (!post || !Array.isArray(post)) {
+    return <p className="text-center">No posts to show.</p>;
+  }
+
   return (
     <>
       {post.map((post, index) => (
         <div
           key={index}
-          className="w-full max-w-[35rem] mx-auto py-4 bg-white rounded-lg border-2 mb-6"
+          className="w-full max-w-[35rem] mx-auto py-4 bg-white rounded-lg border-2 "
         >
-          <div className="px-4 gap-4 flex flex-col">
+          <div className="flex items-center justify-between px-4">
             <div className="flex items-center space-x-3">
               <IKImage
                 src={post.userId.profile_image}
@@ -171,10 +244,31 @@ export default function PostList() {
                 <p className="text-xs text-gray-500 leading-tight">
                   {post.userId.headline}
                 </p>
+                <p className="text-xs text-gray-500 leading-tight">
+                  {getTimeAgo(post.createdAt)}
+                </p>
               </div>
             </div>
-            <div>
-              <p className="text-sm whitespace-pre-line">{post.content}</p>
+
+            {/* Three-dot menu */}
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpenPostId(post._id)}
+                className="p-1 hover:bg-gray-100 rounded-full"
+              >
+                <MoreVertical className="w-5 h-5 text-gray-600" />
+              </button>
+              {menuOpenPostId === post._id && (
+                <div className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10">
+                  <button
+                    disabled={post.userId._id !== userId}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={() => handleDeletePost(post._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -245,11 +339,18 @@ export default function PostList() {
                     type="text"
                     className="w-[90%]  bg-white  p-2 outline-none"
                     placeholder="Write a Comment..."
+                    value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                   />
                   <button
-                    className="rounded-full bg-[var(--mainGreen)] px-4 py-2 text-white hover:bg-[var(--mainGreenDark)]"
-                    onClick={handleComment}
+                  disabled={commentText === ""}
+                    className="rounded-full bg-[var(--mainGreen)] px-4 py-2 text-white hover:bg-[var(--mainGreenDark)] disabled:opacity-50"
+                    onClick={() => {
+                      if (commentText !== "") {
+                        handleComment();
+                      }
+                    }}
+                    
                   >
                     Comment
                   </button>
@@ -260,10 +361,9 @@ export default function PostList() {
                 {post.comments.map((item: any, index: number) => (
                   <div key={index}>
                     <CommentComponent
-                      profileImage={item?.userId?.profile_image}
-                      name={item?.userId?.full_name}
-                      comment={item?.text}
-                      headline={item?.userId?.headline}
+                      comment={item}
+                      postId={commentPostId}
+                      userId={userId}
                     />
                   </div>
                 ))}
