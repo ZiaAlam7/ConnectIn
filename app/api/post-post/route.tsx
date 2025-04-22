@@ -31,7 +31,22 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     if (target === "new post") {
+
+      if(!values.content && !values.image){
+        return NextResponse.json(
+          { message: "Cannot add empty post", success: false },
+          { status: 403 }
+        );
+      }
       const newPost = await Post.create(values);
+console.log(newPost)
+
+
+      return NextResponse.json({
+        message: "Post created successfully",
+        success: true,
+        data: newPost, 
+      });
     }
 
     try {

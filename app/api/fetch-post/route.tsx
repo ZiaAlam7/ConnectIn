@@ -17,7 +17,14 @@ export async function GET(request: NextRequest) {
 
     await connectToDatabase();
    
+    // const page = Math.max(Number(request.nextUrl.searchParams.get('page')) || 1, 1); // Ensure page is at least 1
+    // const limit = 10;
+    // const skip = (page - 1) * limit;
+
     const allPosts = await Post.find()
+    .sort({ createdAt: -1 })
+  //   .skip(skip)
+  // .limit(limit)
     .populate('userId', 'full_name headline profile_image') // post's author
     .populate('comments.userId', 'full_name headline profile_image'); // comment authors
   

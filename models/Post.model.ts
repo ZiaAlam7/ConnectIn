@@ -26,7 +26,7 @@ const CommentSchema = new Schema<IComment>({
 const PostSchema = new Schema<IPost>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'UserDetail', required: true },  // Reference to UserDetail
-    content: { type: String, required: true },
+    content: { type: String },
     image: { type: String },
     likes: [{ type: Schema.Types.ObjectId, ref: 'UserDetail' }],
     comments: [CommentSchema],

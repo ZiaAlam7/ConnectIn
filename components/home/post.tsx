@@ -51,42 +51,37 @@ export default function PostList() {
   const PostUserLiked = user?.liked;
   const { post, setPost }: any = usePost();
 
-
   const [commentPostId, setCommentPostId]: any = useState();
   const [likePostId, setLikePostId] = useState();
   const [commentText, setCommentText] = useState("");
 
-  const [menuOpenPostId, setMenuOpenPostId] = useState<string | null>(null);
+  const [menuOpenPostId, setMenuOpenPostId] = useState<string | null>("");
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  // Function to calculate the time ago a post or comment was made
+  function getTimeAgo(dateString: string): string {
+    const createdAt = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - createdAt.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
 
-// Function to calculate the time ago a post or comment was made
-function getTimeAgo(dateString: string): string {
-  const createdAt = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - createdAt.getTime();
-  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    if (diffInMinutes < 1) {
+      return "Just now";
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
+    }
 
-  if (diffInMinutes < 1) {
-    return "Just now";
-  } else if (diffInMinutes < 60) {
-    return `${diffInMinutes} min${diffInMinutes > 1 ? "s" : ""} ago`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+
+    if (diffInHours < 24) {
+      return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
   }
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-
-  if (diffInHours < 24) {
-    return `${diffInHours} hr${diffInHours > 1 ? "s" : ""} ago`;
-  }
-
-  const diffInDays = Math.floor(diffInHours / 24);
-  return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-}
-
-
 
   const handleComment = async () => {
-
     const values = {
       userId: userId,
       text: commentText,
@@ -119,7 +114,6 @@ function getTimeAgo(dateString: string): string {
 
       setPost(updatedPosts);
       setCommentText("");
-
     } catch (error: any) {
       console.error(
         "Error while adding comment:",
@@ -178,7 +172,7 @@ function getTimeAgo(dateString: string): string {
   };
 
   const handleDeletePost = async (postId: string) => {
-    console.log(postId);
+    console.log("Trying to delete post:", postId);
 
     try {
       await axios.post(
@@ -190,7 +184,6 @@ function getTimeAgo(dateString: string): string {
           },
         }
       );
-
 
       // Update the context immediately
       const updatedPosts = post.filter((p: PostType) => p._id !== postId);
@@ -204,6 +197,12 @@ function getTimeAgo(dateString: string): string {
       );
     }
   };
+
+  useEffect(() => {
+    if (menuOpenPostId) {
+      console.log("menuOpenPostId updated:", menuOpenPostId);
+    }
+  }, [menuOpenPostId]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -239,10 +238,10 @@ function getTimeAgo(dateString: string): string {
               />
               <div>
                 <p className="font-semibold text-sm leading-tight">
-                  {post.userId.full_name}
+                  {post.userId?.full_name}
                 </p>
                 <p className="text-xs text-gray-500 leading-tight">
-                  {post.userId.headline}
+                  {post.userId?.headline}
                 </p>
                 <p className="text-xs text-gray-500 leading-tight">
                   {getTimeAgo(post.createdAt)}
@@ -253,7 +252,9 @@ function getTimeAgo(dateString: string): string {
             {/* Three-dot menu */}
             <div className="relative" ref={menuRef}>
               <button
-                onClick={() => setMenuOpenPostId(post._id)}
+                onClick={() => {
+                  setMenuOpenPostId(post._id);
+                }}
                 className="p-1 hover:bg-gray-100 rounded-full"
               >
                 <MoreVertical className="w-5 h-5 text-gray-600" />
@@ -263,7 +264,7 @@ function getTimeAgo(dateString: string): string {
                   <button
                     disabled={post.userId._id !== userId}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                    onClick={() => handleDeletePost(post._id)}
+                    onClick={() =>console.log("hello")}
                   >
                     Delete
                   </button>
@@ -271,8 +272,15 @@ function getTimeAgo(dateString: string): string {
               )}
             </div>
           </div>
-
+          <button
+                    disabled={post.userId._id !== userId}
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={() =>console.log(menuOpenPostId , post._id)}
+                  >
+                    Delete
+                  </button>
           <div className="mt-4 space-y-4">
+            <p className=" text-sm leading-tight px-4">{post.content}</p>
             {post.image && (
               <AspectRatio ratio={16 / 9} className="w-full overflow-hidden">
                 <IKImage
@@ -343,14 +351,13 @@ function getTimeAgo(dateString: string): string {
                     onChange={(e) => setCommentText(e.target.value)}
                   />
                   <button
-                  disabled={commentText === ""}
+                    disabled={commentText === ""}
                     className="rounded-full bg-[var(--mainGreen)] px-4 py-2 text-white hover:bg-[var(--mainGreenDark)] disabled:opacity-50"
                     onClick={() => {
                       if (commentText !== "") {
                         handleComment();
                       }
                     }}
-                    
                   >
                     Comment
                   </button>
