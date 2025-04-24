@@ -83,16 +83,17 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
           },
         }
       );
+      const newPost = response.data.data
 
-      const newPost = {
-        _id: "temp_" + Math.random(),
-        userId: user,
-        content: postText,
-        image: postMedia,
-        likes: [],
-        comments: [],
-        createdAt: new Date().toISOString(),
-      };
+      // {
+      //   _id: "temp_" + Math.random(),
+      //   userId: user,
+      //   content: postText,
+      //   image: postMedia,
+      //   likes: [],
+      //   comments: [],
+      //   createdAt: new Date().toISOString(),
+      // };
 
       setPost([newPost, ...post]);
       setPostMedia("")

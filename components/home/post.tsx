@@ -20,6 +20,8 @@ export interface User {
   _id: string;
   first_name: string;
   last_name: string;
+  full_name: string;
+  headline: string;
   profile_image: string;
 }
 
@@ -42,10 +44,12 @@ export interface PostType {
 }
 
 export interface PostListProps {
-  posts: PostType[];
+  post: PostType;
+  postP: PostType;
+  // setPost: (post: PostType) => void;
 }
 
-export default function PostList() {
+export default function PostList({ postP }: any) {
   const { user, setUser }: any = useUser();
   const userId = user?._id;
   const PostUserLiked = user?.liked;
@@ -55,7 +59,7 @@ export default function PostList() {
   const [likePostId, setLikePostId] = useState();
   const [commentText, setCommentText] = useState("");
 
-  const [menuOpenPostId, setMenuOpenPostId] = useState<string | null>("");
+  const [menuOpenPostId, setMenuOpenPostId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Function to calculate the time ago a post or comment was made
@@ -99,20 +103,15 @@ export default function PostList() {
           },
         }
       );
-      console.log("comment addded:", response.data);
+      console.log("comment addded:", response.data.data);
 
-      const newComment = {
-        _id: "temp_" + Math.random(),
-        userId: user,
-        text: commentText,
-        createdAt: new Date().toISOString(),
-      };
+      const newComment = response.data.data;
 
-      const updatedPosts = post.map((p: PostType) =>
-        p._id === postId ? { ...p, comments: [...p.comments, newComment] } : p
+      const updatedPost = post.map((p: PostType) =>
+        p._id === postId ? newComment : p
       );
 
-      setPost(updatedPosts);
+      setPost(updatedPost);
       setCommentText("");
     } catch (error: any) {
       console.error(
@@ -210,6 +209,7 @@ export default function PostList() {
         setMenuOpenPostId(null);
       }
     }
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -222,163 +222,158 @@ export default function PostList() {
 
   return (
     <>
-      {post.map((post, index) => (
-        <div
-          key={index}
-          className="w-full max-w-[35rem] mx-auto py-4 bg-white rounded-lg border-2 "
-        >
-          <div className="flex items-center justify-between px-4">
-            <div className="flex items-center space-x-3">
-              <IKImage
-                src={post.userId.profile_image}
-                alt="Profile Picture"
-                className="rounded-full object-cover"
-                width={50}
-                height={50}
-              />
-              <div>
-                <p className="font-semibold text-sm leading-tight">
-                  {post.userId?.full_name}
-                </p>
-                <p className="text-xs text-gray-500 leading-tight">
-                  {post.userId?.headline}
-                </p>
-                <p className="text-xs text-gray-500 leading-tight">
-                  {getTimeAgo(post.createdAt)}
-                </p>
-              </div>
-            </div>
-
-            {/* Three-dot menu */}
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => {
-                  setMenuOpenPostId(post._id);
-                }}
-                className="p-1 hover:bg-gray-100 rounded-full"
-              >
-                <MoreVertical className="w-5 h-5 text-gray-600" />
-              </button>
-              {menuOpenPostId === post._id && (
-                <div className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10">
-                  <button
-                    disabled={post.userId._id !== userId}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                    onClick={() =>console.log("hello")}
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          <button
-                    disabled={post.userId._id !== userId}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                    onClick={() =>console.log(menuOpenPostId , post._id)}
-                  >
-                    Delete
-                  </button>
-          <div className="mt-4 space-y-4">
-            <p className=" text-sm leading-tight px-4">{post.content}</p>
-            {post.image && (
-              <AspectRatio ratio={16 / 9} className="w-full overflow-hidden">
-                <IKImage
-                  src={post.image}
-                  alt="Post image"
-                  width={1280}
-                  height={720}
-                  className="object-contain w-full h-full"
-                />
-              </AspectRatio>
-            )}
-
-            <div className="flex justify-between text-sm text-gray-600 mt-2 px-4">
-              <div className="flex items-center space-x-2">
-                <FaThumbsUp className="text-[var(--mainGreen)]" />
-                <span>{post.likes.length}</span>
-              </div>
-              <div
-                className="flex items-center space-x-2 cursor-pointer"
-                onClick={() => setCommentPostId(post?._id)}
-              >
-                <FaRegCommentDots className="text-[var(--mainGreen)]" />
-                <span>{post.comments.length}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-around text-gray-700 pt-3 border-t mt-3">
-              <button
-                className={`flex items-center gap-1 ${
-                  PostUserLiked.includes(post._id)
-                    ? "text-[var(--mainGreenDark)]"
-                    : "hover:text-[var(--mainGreenDark)]"
-                }`}
-                onClick={() =>
-                  handleLike(
-                    post._id,
-                    PostUserLiked.includes(post._id) ? "unlike" : "like"
-                  )
-                }
-              >
-                <FaThumbsUp />{" "}
-                {PostUserLiked.includes(post._id) ? "Unlike" : "Like"}
-              </button>
-
-              <button
-                className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
-                onClick={() => setCommentPostId(post?._id)}
-              >
-                <FaRegCommentDots /> Comment
-              </button>
-              <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
-                <FaShare /> Repost
-              </button>
-              <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
-                <FaPaperPlane /> Send
-              </button>
-            </div>
-          </div>
-          {post?._id === commentPostId && (
+      <div className="w-full max-w-[35rem] mx-auto py-4 bg-white rounded-lg border-2 ">
+        <div className="flex items-center justify-between px-4">
+          <div className="flex items-center space-x-3">
+            <IKImage
+              src={postP.userId.profile_image}
+              alt="Profile Picture"
+              className="rounded-full object-cover"
+              width={50}
+              height={50}
+            />
             <div>
-              <div className="px-2 py-4">
-                <div className="w-full mx-auto bg-white border border-gray-300 rounded-lg shadow-sm p-1 cursor-pointer flex items-center justify-center gap-1">
-                  <input
-                    type="text"
-                    className="w-[90%]  bg-white  p-2 outline-none"
-                    placeholder="Write a Comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                  />
-                  <button
-                    disabled={commentText === ""}
-                    className="rounded-full bg-[var(--mainGreen)] px-4 py-2 text-white hover:bg-[var(--mainGreenDark)] disabled:opacity-50"
-                    onClick={() => {
-                      if (commentText !== "") {
-                        handleComment();
-                      }
-                    }}
-                  >
-                    Comment
-                  </button>
-                </div>
-              </div>
+              <p className="font-semibold text-sm leading-tight">
+                {postP.userId?.full_name}
+              </p>
+              <p className="text-xs text-gray-500 leading-tight">
+                {postP.userId?.headline}
+              </p>
+              <p className="text-xs text-gray-500 leading-tight">
+                {getTimeAgo(postP.createdAt)}
+              </p>
+            </div>
+          </div>
 
-              <div>
-                {post.comments.map((item: any, index: number) => (
-                  <div key={index}>
-                    <CommentComponent
-                      comment={item}
-                      postId={commentPostId}
-                      userId={userId}
-                    />
-                  </div>
-                ))}
+          {/* Three-dot menu */}
+
+          <div className="relative " ref={menuRef}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuOpenPostId(postP._id);
+              }}
+              className="p-1 hover:bg-gray-100 rounded-full"
+            >
+              <MoreVertical className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {postP._id === menuOpenPostId && (
+              <div
+                className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10"
+                onClick={(e) => e.stopPropagation()} // Prevents outside click handler
+              >
+                <button
+                  disabled={postP.userId._id !== userId}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                  onClick={() => handleDeletePost(postP._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-4">
+          <p className=" text-sm leading-tight px-4">{postP.content}</p>
+          {postP.image && (
+            <AspectRatio ratio={16 / 9} className="w-full overflow-hidden">
+              <IKImage
+                src={postP.image}
+                alt="Post image"
+                width={1280}
+                height={720}
+                className="object-contain w-full h-full"
+              />
+            </AspectRatio>
+          )}
+
+          <div className="flex justify-between text-sm text-gray-600 mt-2 px-4">
+            <div className="flex items-center space-x-2">
+              <FaThumbsUp className="text-[var(--mainGreen)]" />
+              <span>{postP.likes.length}</span>
+            </div>
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={() => setCommentPostId(postP?._id)}
+            >
+              <FaRegCommentDots className="text-[var(--mainGreen)]" />
+              <span>{postP.comments.length}</span>
+            </div>
+          </div>
+
+          <div className="flex justify-around text-gray-700 pt-3 border-t mt-3">
+            <button
+              className={`flex items-center gap-1 ${
+                PostUserLiked.includes(postP._id)
+                  ? "text-[var(--mainGreenDark)]"
+                  : "hover:text-[var(--mainGreenDark)]"
+              }`}
+              onClick={() =>
+                handleLike(
+                  postP._id,
+                  PostUserLiked.includes(postP._id) ? "unlike" : "like"
+                )
+              }
+            >
+              <FaThumbsUp />{" "}
+              {PostUserLiked.includes(postP._id) ? "Unlike" : "Like"}
+            </button>
+
+            <button
+              className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
+              onClick={() => setCommentPostId(postP?._id)}
+            >
+              <FaRegCommentDots /> Comment
+            </button>
+            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
+              <FaShare /> Repost
+            </button>
+            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
+              <FaPaperPlane /> Send
+            </button>
+          </div>
+        </div>
+        {postP?._id === commentPostId && (
+          <div>
+            <div className="px-2 py-4">
+              <div className="w-full mx-auto bg-white border border-gray-300 rounded-lg shadow-sm p-1 cursor-pointer flex items-center justify-center gap-1">
+                <input
+                  type="text"
+                  className="w-[90%]  bg-white  p-2 outline-none"
+                  placeholder="Write a Comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
+                <button
+                  disabled={commentText === ""}
+                  className="rounded-full bg-[var(--mainGreen)] px-4 py-2 text-white hover:bg-[var(--mainGreenDark)] disabled:opacity-50"
+                  onClick={() => {
+                    if (commentText !== "") {
+                      handleComment();
+                    }
+                  }}
+                >
+                  Comment
+                </button>
               </div>
             </div>
-          )}
-        </div>
-      ))}
+
+            <div>
+              {postP.comments.map((item: any, index: number) => (
+                <div key={index}>
+                  <CommentComponent
+                    comment={item}
+                    postId={commentPostId}
+                    userId={userId}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 }

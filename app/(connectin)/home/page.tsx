@@ -8,7 +8,7 @@ import { usePost } from "@/context/PostContext";
 import PostModal from "@/components/profile_modals/PostModal";
 
 export default function HomePage() {
-  const { post }: any = usePost();
+  const { post, setPost }: any = usePost();
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -36,7 +36,11 @@ export default function HomePage() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <Post />
+            {(post ?? []).map((item: any, index: any) => (
+              <div key={index}>
+              <Post postP={item}/>
+              </div>
+            ))}
           </div>
         </div>
         <div className="hidden lg:block sticky top-[4rem] h-fit ">

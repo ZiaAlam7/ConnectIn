@@ -21,6 +21,8 @@ export async function GET(request: NextRequest) {
     // const limit = 10;
     // const skip = (page - 1) * limit;
 
+  
+
     const allPosts = await Post.find()
     .sort({ createdAt: -1 })
   //   .skip(skip)

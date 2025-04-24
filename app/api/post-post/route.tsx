@@ -6,7 +6,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth_options";
 
 export async function POST(request: NextRequest) {
-
   try {
     const session = await getServerSession(authOptions);
 
@@ -19,53 +18,71 @@ export async function POST(request: NextRequest) {
 
     const { target, values, postId, commentId, userId } = await request.json();
 
-    console.log("This is target: ",target);
-    console.log("This is values: ",values);
-    console.log("This is postId: ",postId);
-    console.log("This is commentId: ",commentId);
-    console.log("This is userId: ",userId);
-
-
-
+    console.log("This is target: ", target);
+    console.log("This is values: ", values);
+    console.log("This is postId: ", postId);
+    console.log("This is commentId: ", commentId);
+    console.log("This is userId: ", userId);
 
     await connectToDatabase();
 
     if (target === "new post") {
-
-      if(!values.content && !values.image){
+      if (!values.content && !values.image) {
         return NextResponse.json(
           { message: "Cannot add empty post", success: false },
           { status: 403 }
         );
       }
-      const newPost = await Post.create(values);
-console.log(newPost)
-
-
-      return NextResponse.json({
-        message: "Post created successfully",
-        success: true,
-        data: newPost, 
-      });
+    
+      try {
+        const newPost = await Post.create(values)
+        await newPost.save();
+        const populatedPost = await Post.findById(newPost._id)
+        .populate("userId", "full_name headline profile_image")
+        .populate("comments.userId", "full_name headline profile_image");
+    
+        return NextResponse.json({
+          message: "Post created successfully",
+          success: true,
+          data: populatedPost,
+        });
+      } catch (error) {
+        console.error("Post creation error:", error);
+        return NextResponse.json(
+          { message: "Failed to create post", success: false },
+          { status: 500 }
+        );
+      }
     }
+    
 
     try {
       if (target === "comments" && String(values.text).trim() !== "") {
-        await Post.findByIdAndUpdate(postId, {
-          $push: {
-            comments: {
-              userId: values.userId,
-              text: values.text,
-              createdAt: new Date(),
+        const newComment = await Post.findByIdAndUpdate(
+          postId,
+          {
+            $push: {
+              comments: {
+                userId: values.userId,
+                text: values.text,
+                createdAt: new Date(),
+              },
             },
           },
+          { new: true }
+        )
+          .populate("userId", "full_name headline profile_image")
+          .populate("comments.userId", "full_name headline profile_image");
+
+        return NextResponse.json({
+          message: "Comment Added Successfully",
+          success: true,
+          data: newComment,
         });
       }
     } catch (error) {
       console.error("Error while adding comment:", error);
     }
-
-
 
     try {
       if (target === "like") {
@@ -88,10 +105,8 @@ console.log(newPost)
       console.error("Error while liking the post:", error);
     }
 
-
     try {
       if (target === "delete comment") {
-       
         const post = await Post.findOne({
           _id: postId,
           comments: {
@@ -101,27 +116,25 @@ console.log(newPost)
             },
           },
         });
-  
+
         if (!post) {
           return NextResponse.json(
             { message: "Unauthorized or comment not found", success: false },
             { status: 403 }
           );
         }
-  
-      
+
         await Post.findByIdAndUpdate(postId, {
           $pull: { comments: { _id: commentId } },
         });
-  
+
         console.log("Comment deleted");
-  
+
         return NextResponse.json(
           { message: "Comment deleted successfully", success: true },
           { status: 200 }
         );
       }
-  
     } catch (error) {
       console.error("Error while deleting comment:", error);
       return NextResponse.json(
@@ -129,11 +142,6 @@ console.log(newPost)
         { status: 500 }
       );
     }
-  
-
-
-
-
 
     try {
       if (target === "delete post") {
