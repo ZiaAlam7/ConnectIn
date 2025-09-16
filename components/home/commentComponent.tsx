@@ -92,7 +92,7 @@ function getTimeAgo(dateString: string): string {
 
 
       const updatedPosts = post.map((p: any) =>
-        p._id === postId
+        p.postId === postId
           ? {
               ...p,
               comments: p.comments.filter((c: any) => c._id !== commentId),

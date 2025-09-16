@@ -49,6 +49,7 @@ export interface IUserDetail {
   about: string;
   skill: string[];
   liked: string[];
+  commented: string[];
   language: ILanguage[];
   _id?: mongoose.Types.ObjectId;
   createdAt?: Date;
@@ -112,6 +113,7 @@ const userDetailSchema = new Schema<IUserDetail>(
     about: { type: String },
     skill: [{ type: String}],
     liked: [{ type: String}],
+    commented: [{ type: String}],
     language: [LanguageSchema]
   },
   { timestamps: true }

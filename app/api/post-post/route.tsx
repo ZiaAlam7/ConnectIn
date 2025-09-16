@@ -33,14 +33,14 @@ export async function POST(request: NextRequest) {
           { status: 403 }
         );
       }
-    
+
       try {
-        const newPost = await Post.create(values)
+        const newPost = await Post.create(values);
         await newPost.save();
-        const populatedPost = await Post.findById(newPost._id)
-        .populate("userId", "full_name headline profile_image")
-        .populate("comments.userId", "full_name headline profile_image");
-    
+        const populatedPost = await Post.findOne(newPost.postId)
+          .populate("userId", "full_name headline profile_image")
+          .populate("comments.userId", "full_name headline profile_image");
+
         return NextResponse.json({
           message: "Post created successfully",
           success: true,
@@ -54,12 +54,11 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    
 
     try {
       if (target === "comments" && String(values.text).trim() !== "") {
-        const newComment = await Post.findByIdAndUpdate(
-          postId,
+        const newComment = await Post.findOneAndUpdate(
+          { postId },
           {
             $push: {
               comments: {
@@ -74,6 +73,11 @@ export async function POST(request: NextRequest) {
           .populate("userId", "full_name headline profile_image")
           .populate("comments.userId", "full_name headline profile_image");
 
+
+        await UserDetail.findOneAndUpdate(
+          { email },
+          { $addToSet: { commented: postId } }
+        );
         return NextResponse.json({
           message: "Comment Added Successfully",
           success: true,
@@ -84,31 +88,11 @@ export async function POST(request: NextRequest) {
       console.error("Error while adding comment:", error);
     }
 
-    try {
-      if (target === "like") {
-        await Post.findByIdAndUpdate(postId, {
-          $addToSet: {
-            likes: values.userId,
-          },
-        });
-        await UserDetail.findOneAndUpdate(
-          { email },
-          {
-            $addToSet: {
-              liked: postId,
-            },
-          }
-        );
-        console.log("Liked");
-      }
-    } catch (error) {
-      console.error("Error while liking the post:", error);
-    }
-
+    
     try {
       if (target === "delete comment") {
         const post = await Post.findOne({
-          _id: postId,
+          postId,
           comments: {
             $elemMatch: {
               _id: commentId,
@@ -117,6 +101,11 @@ export async function POST(request: NextRequest) {
           },
         });
 
+         await UserDetail.findOneAndUpdate(
+          { email },
+          { $pull: { commented: postId } }
+        );
+
         if (!post) {
           return NextResponse.json(
             { message: "Unauthorized or comment not found", success: false },
@@ -124,9 +113,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        await Post.findByIdAndUpdate(postId, {
-          $pull: { comments: { _id: commentId } },
-        });
+        await Post.findOneAndUpdate(
+          { postId },
+          {
+            $pull: { comments: { _id: commentId } },
+          }
+        );
 
         console.log("Comment deleted");
 
@@ -143,9 +135,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
+
+
+      // Code for liking and unliking a post
+    try {
+      if (target === "like") {
+        // Add like
+        await Post.findOneAndUpdate(
+          { postId },
+          { $addToSet: { likes: values.userId } }
+        );
+        await UserDetail.findOneAndUpdate(
+          { email },
+          { $addToSet: { liked: postId } }
+        );
+        console.log("Liked");
+      } else if (target === "unlike") {
+        // Remove like
+        await Post.findOneAndUpdate(
+          { postId },
+          { $pull: { likes: values.userId } }
+        );
+        await UserDetail.findOneAndUpdate(
+          { email },
+          { $pull: { liked: postId } }
+        );
+        console.log("Unliked");
+      }
+    } catch (error) {
+      console.error("Error while updating like/unlike:", error);
+    }
+
+    
     try {
       if (target === "delete post") {
-        const post = await Post.findById(postId);
+        const post = await Post.findOne({ postId });
 
         if (String(post.userId) !== userId) {
           return NextResponse.json(
@@ -154,7 +178,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        await Post.findByIdAndDelete(postId);
+        await Post.findOneAndDelete({ postId });
         console.log("Post deleted");
         return NextResponse.json(
           { message: "Post deleted successfully", success: true },

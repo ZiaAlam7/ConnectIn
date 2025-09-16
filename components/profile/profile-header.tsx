@@ -20,6 +20,8 @@ const ProfileHeader = () => {
     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
   );
   const { user }: any = useUser();
+  console.log("this is user pro max", user)
+
   const fullName = `${user?.first_name} ${user?.last_name}`;
   const imageKitUrl: string =
     imageType === "profile_image"
@@ -125,13 +127,6 @@ const ProfileHeader = () => {
         {/* Actions */}
         <div className="flex justify-end gap-2 mb-4 pt-4">
           <Button variant="outline" size="sm" className="rounded-full">
-            <PlusIcon className="h-4 w-4 mr-1" />
-            Add profile section
-          </Button>
-          <Button variant="outline" size="sm" className="rounded-full">
-            More
-          </Button>
-          <Button variant="outline" size="sm" className="rounded-full">
             <PencilIcon className="h-4 w-4" />
           </Button>
         </div>
@@ -148,8 +143,6 @@ const ProfileHeader = () => {
             </span>
             <span className="mx-1">•</span>
             <span className="text-blue-600 font-medium">500+ connections</span>
-            <span className="mx-1">•</span>
-            <span className="text-blue-600 font-medium">Contact info</span>
           </div>
 
           <div className="flex gap-2 mt-4">
@@ -158,9 +151,6 @@ const ProfileHeader = () => {
             </Button>
             <Button variant="outline" className="rounded-full">
               Connect
-            </Button>
-            <Button variant="outline" className="rounded-full">
-              More
             </Button>
           </div>
         </div>

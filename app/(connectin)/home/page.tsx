@@ -15,18 +15,12 @@ export default function HomePage() {
   return (
     <>
         <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
-      <div className="container max-w-[75%] mx-auto p-4 sm:p-6 grid grid-cols-[1fr_2fr_1fr] gap-6 ">
-        <div className="sticky top-[4rem] h-fit lg:block hidden">
-          <ProfileCard
-          // name="Zia Alam ps"
-          // title="Full Stack Web Dev | Next JS | React JS"
-          // location="Pakistan"
-          // university="Qurtuba University of Science and Information Technology"
-          // profileImage="/zia-profile.jpg"
-          // bannerImage="/banner.jpg"
-          />
+      <div className="container w-[65%] mx-auto p-4 sm:p-6 flex gap-6">
+        <div className="sticky top-[4rem] h-fit lg:block hidden ">
+          <ProfileCard  
+        />
         </div>
-        <div>
+        <div className=" w-full">
           <div>
             <div
              onClick={() => setIsModalOpen(true)}
@@ -41,19 +35,6 @@ export default function HomePage() {
               <Post postP={item}/>
               </div>
             ))}
-          </div>
-        </div>
-        <div className="hidden lg:block sticky top-[4rem] h-fit ">
-          <div className="rounded-xl overflow-hidden shadow">
-            <IKImage
-              src={
-                "https://ik.imagekit.io/ConnectIn/ConnectIn-ad.JPG?updatedAt=1744466100792"
-              }
-              alt="LinkedIn Ad"
-              className="w-full h-auto object-cover"
-              width={500}
-              height={500}
-            />
           </div>
         </div>
       </div>

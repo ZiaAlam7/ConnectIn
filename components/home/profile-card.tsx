@@ -37,7 +37,7 @@ export default function ProfileCard() {
   const education = user?.education[0];
 
   return (
-    <div className="max-w-[16rem] h-fit bg-white rounded-xl shadow-md overflow-hidden border ">
+    <div className="w-[15rem] h-fit bg-white rounded-xl shadow-md overflow-hidden border ">
       <div className="relative h-24">
         <IKImage
           src={userCoverImage}

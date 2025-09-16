@@ -12,6 +12,7 @@ import CommentComponent from "./commentComponent";
 import { useState } from "react";
 import axios from "axios";
 import { Playwrite_BE_VLG } from "next/font/google";
+import { useToast } from "@/hooks/use-toast";
 
 import { MoreVertical } from "lucide-react";
 import { useRef, useEffect } from "react";
@@ -34,6 +35,7 @@ export interface Comment {
 
 export interface PostType {
   _id: string;
+  postId: string;
   content: string;
   image: string;
   userId: User;
@@ -54,6 +56,7 @@ export default function PostList({ postP }: any) {
   const userId = user?._id;
   const PostUserLiked = user?.liked;
   const { post, setPost }: any = usePost();
+    const { toast } = useToast();
 
   const [commentPostId, setCommentPostId]: any = useState();
   const [likePostId, setLikePostId] = useState();
@@ -108,7 +111,7 @@ export default function PostList({ postP }: any) {
       const newComment = response.data.data;
 
       const updatedPost = post.map((p: PostType) =>
-        p._id === postId ? newComment : p
+        p.postId === postId ? newComment : p
       );
 
       setPost(updatedPost);
@@ -140,7 +143,7 @@ export default function PostList({ postP }: any) {
 
       // Like and Unlike Local Update the Posts
       const updatedPosts = post.map((p: PostType) =>
-        p._id === postId
+        p.postId === postId
           ? {
               ...p,
               likes:
@@ -185,13 +188,47 @@ export default function PostList({ postP }: any) {
       );
 
       // Update the context immediately
-      const updatedPosts = post.filter((p: PostType) => p._id !== postId);
+      const updatedPosts = post.filter((p: PostType) => p.postId !== postId);
       setPost(updatedPosts);
       setMenuOpenPostId(null);
       console.log("Post deleted");
     } catch (error: any) {
       console.error(
         "Error deleting post:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const handleRepost = async (postP: any) => {
+console.log(postP)
+
+    const values = {
+      postId: postP.postId,
+      content: postP.content,
+      image: postP.image,
+      userId: postP.userId,
+      reposted_by: userId,
+    };
+    const target = "new post";
+
+    try {
+      const response = await axios.post(
+        "/api/post-post",
+        { target, values },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const newPost = response.data.data
+
+      setPost([newPost, ...post]);
+      // setPostMedia("")
+    
+    } catch (error: any) {
+      console.error(
         error.response?.data || error.message
       );
     }
@@ -222,7 +259,7 @@ export default function PostList({ postP }: any) {
 
   return (
     <>
-      <div className="w-full max-w-[35rem] mx-auto py-4 bg-white rounded-lg border-2 ">
+      <div className="w-full  mx-auto py-4 bg-white rounded-lg border-2 ">
         <div className="flex items-center justify-between px-4">
           <div className="flex items-center space-x-3">
             <IKImage
@@ -251,14 +288,14 @@ export default function PostList({ postP }: any) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setMenuOpenPostId(postP._id);
+                setMenuOpenPostId(postP.postId);
               }}
               className="p-1 hover:bg-gray-100 rounded-full"
             >
               <MoreVertical className="w-5 h-5 text-gray-600" />
             </button>
 
-            {postP._id === menuOpenPostId && (
+            {postP.postId === menuOpenPostId && (
               <div
                 className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10"
                 onClick={(e) => e.stopPropagation()} // Prevents outside click handler
@@ -266,7 +303,7 @@ export default function PostList({ postP }: any) {
                 <button
                   disabled={postP.userId._id !== userId}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={() => handleDeletePost(postP._id)}
+                  onClick={() => handleDeletePost(postP.postId)}
                 >
                   Delete
                 </button>
@@ -296,7 +333,7 @@ export default function PostList({ postP }: any) {
             </div>
             <div
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => setCommentPostId(postP?._id)}
+              onClick={() => setCommentPostId(postP?.postId)}
             >
               <FaRegCommentDots className="text-[var(--mainGreen)]" />
               <span>{postP.comments.length}</span>
@@ -306,36 +343,35 @@ export default function PostList({ postP }: any) {
           <div className="flex justify-around text-gray-700 pt-3 border-t mt-3">
             <button
               className={`flex items-center gap-1 ${
-                PostUserLiked.includes(postP._id)
+                PostUserLiked.includes(postP.postid)
                   ? "text-[var(--mainGreenDark)]"
                   : "hover:text-[var(--mainGreenDark)]"
               }`}
               onClick={() =>
                 handleLike(
-                  postP._id,
-                  PostUserLiked.includes(postP._id) ? "unlike" : "like"
+                  postP.postId,
+                  PostUserLiked.includes(postP.postId) ? "unlike" : "like"
                 )
               }
             >
               <FaThumbsUp />{" "}
-              {PostUserLiked.includes(postP._id) ? "Unlike" : "Like"}
+              {PostUserLiked.includes(postP.postId) ? "Unlike" : "Like"}
             </button>
 
             <button
               className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
-              onClick={() => setCommentPostId(postP?._id)}
+              onClick={() => setCommentPostId(postP?.postId)}
             >
               <FaRegCommentDots /> Comment
             </button>
-            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
+            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
+             onClick={() =>  handleRepost(postP)}
+            >
               <FaShare /> Repost
-            </button>
-            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]">
-              <FaPaperPlane /> Send
             </button>
           </div>
         </div>
-        {postP?._id === commentPostId && (
+        {postP?.postId === commentPostId && (
           <div>
             <div className="px-2 py-4">
               <div className="w-full mx-auto bg-white border border-gray-300 rounded-lg shadow-sm p-1 cursor-pointer flex items-center justify-center gap-1">

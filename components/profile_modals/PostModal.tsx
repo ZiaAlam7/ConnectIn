@@ -67,9 +67,11 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
     console.log("typeof user_id:", typeof user_id);
 
     const values = {
+      postId: user_id + Date.now(),
       content: postText,
       image: postMedia,
       userId: user_id,
+      reposted_by: null,
     };
     const target = "new post";
 
@@ -84,16 +86,6 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
         }
       );
       const newPost = response.data.data
-
-      // {
-      //   _id: "temp_" + Math.random(),
-      //   userId: user,
-      //   content: postText,
-      //   image: postMedia,
-      //   likes: [],
-      //   comments: [],
-      //   createdAt: new Date().toISOString(),
-      // };
 
       setPost([newPost, ...post]);
       setPostMedia("")

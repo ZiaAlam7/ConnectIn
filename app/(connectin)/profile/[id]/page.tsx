@@ -9,26 +9,34 @@ import LanguagesSection from "@/components/profile/languages-section"
 import ProfileSidebar from "@/components/profile/profile-sidebar"
 import { Container } from "@/components/layout/container"
 import { useUser } from "@/context/UserContext";
+import { useEffect } from "react"
 
 
 export default function ProfilePage() {
   const { user }: any = useUser();
+  const user2 = user
 
+setTimeout(() => {
+  console.log("this is user", user2)
+    
+}, 1000);
+
+  
   return (
       <Container>
-        <div className=" pt-6">
-          <div className=" space-y-6 w-[75%] mx-auto">  
-          <ProfileHeader/>
-            <AboutSection />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+          <div className="lg:col-span-2 space-y-6">
+          <ProfileHeader />
+            {/* <AboutSection />
             <ActivitySection />
             <ExperienceSection />
             <EducationSection />
             <SkillsSection />
-            <LanguagesSection/>
+            <LanguagesSection/> */}
           </div>
-          {/* <div className="lg:col-span-1">
+          <div className="lg:col-span-1">
             <ProfileSidebar />
-          </div> */}
+          </div>
         </div>
       </Container>
 
