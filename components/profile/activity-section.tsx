@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Eye, Pencil, ArrowRight, ThumbsUp, Heart } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IKImage } from "imagekitio-next";
 import Link from "next/link"
 import { usePost } from "@/context/PostContext";
@@ -12,15 +12,30 @@ import { useUser } from "@/context/UserContext";
 import { useRouter } from 'next/navigation';
 
 
+interface Other_User_Props {
+  other_user?: any;
+}
 
 
 
-export default function ActivitySection() {
+export default function ActivitySection({ other_user }: Other_User_Props) {
 
   const router = useRouter();
 
   const { post, setPost }: any = usePost();
-   const { user, setUser }: any = useUser();
+
+    const { user: contextUser } = useUser();
+     const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+   
+     // if `other_user` changes, update
+     useEffect(() => {
+       if (other_user) {
+         setUser(other_user);
+       } else if (contextUser) {
+         setUser(contextUser);
+       }
+     }, [other_user, contextUser]);
+
    const userId = user?._id;
  
 
@@ -39,14 +54,14 @@ export default function ActivitySection() {
           <h2 className="text-xl font-semibold">Activity</h2>
           <p className="text-sm text-muted-foreground">1,342 followers</p>
         </div>
-        <div className="flex items-center gap-2">
+        {!other_user && <div className="flex items-center gap-2">
           <Button variant="outline" className="rounded-full">
             Create a post
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <Pencil className="h-4 w-4" />
           </Button>
-        </div>
+        </div>}
       </CardHeader>
       <CardContent className="pb-1">
         <div className="w-full">

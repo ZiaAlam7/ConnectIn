@@ -1,17 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PencilIcon, CameraIcon, PlusIcon } from "lucide-react";
 import { ProfileImageOverlay } from "./image-change";
 import { IKImage } from "imagekitio-next";
-import { useSession } from "next-auth/react";;
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 
-const ProfileHeader = () => {
-  const router = useRouter();
+interface Other_User_Props {
+  other_user?: any;
+}
 
+const ProfileHeader = ({ other_user }: Other_User_Props) => {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const email = session?.user.email;
   const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +22,18 @@ const ProfileHeader = () => {
   const [targetImage, setTargetImage] = useState(
     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
   );
-  const { user }: any = useUser();
-  console.log("this is user pro max", user)
+
+  const { user: contextUser } = useUser();
+  const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+
+  // if `other_user` changes, update
+  useEffect(() => {
+    if (other_user) {
+      setUser(other_user);
+    } else if (contextUser) {
+      setUser(contextUser);
+    }
+  }, [other_user, contextUser]);
 
   const fullName = `${user?.first_name} ${user?.last_name}`;
   const imageKitUrl: string =
@@ -66,6 +79,7 @@ const ProfileHeader = () => {
   };
 
   // if (!user) return <LoadingSpinner />;
+  if (!user) return <p>Loading...</p>;
 
   return (
     <div className="bg-white shadow rounded-b-xl w-full ">
@@ -87,7 +101,7 @@ const ProfileHeader = () => {
           height={400}
         />
 
-        <button className="absolute right-4 bottom-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
+       {!other_user && <button className="absolute right-4 bottom-4 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
           <CameraIcon
             className="h-5 w-5 text-gray-700"
             onClick={() => {
@@ -96,7 +110,7 @@ const ProfileHeader = () => {
               setTargetImage(userCoverImage);
             }}
           />
-        </button>
+        </button>}
       </div>
 
       {/* Profile Info */}
@@ -111,7 +125,7 @@ const ProfileHeader = () => {
               width={160}
               height={160}
             />
-            <button className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
+            {!other_user && <button className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition">
               <CameraIcon
                 className="h-5 w-5 text-gray-700"
                 onClick={() => {
@@ -120,23 +134,25 @@ const ProfileHeader = () => {
                   setTargetImage(userProfileImage);
                 }}
               />
-            </button>
+            </button>}
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex justify-end gap-2 mb-4 pt-4">
-          <Button variant="outline" size="sm" className="rounded-full">
-            <PencilIcon className="h-4 w-4" />
-          </Button>
+          <div   className="rounded-full">
+            {other_user ? <div className="h-4 w-4"></div> : <PencilIcon className="h-4 w-4 cursor-pointer" />}
+          </div>
         </div>
 
         {/* User Info */}
         <div className="mt-16">
           <h1 className="text-2xl font-bold">{fullName}</h1>
-      {job && <h2 className="text-lg text-gray-700">
-        {job} at {company}
-      </h2>}
+          {job && (
+            <h2 className="text-lg text-gray-700">
+              {job} at {company}
+            </h2>
+          )}
           <div className="flex items-center text-sm text-gray-500 mt-1">
             <span>
               {country}, {city}

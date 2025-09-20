@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import EducationModal from "../profile_modals/EducationModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ObjectId } from "mongoose";
 
 
@@ -19,10 +19,23 @@ interface Education {
     _id: ObjectId
 }
 
+interface Other_User_Props {
+  other_user?: any;
+}
 
 
-export default function EducationSection() {
-  const { user }: any = useUser();
+export default function EducationSection({ other_user }: Other_User_Props) {
+    const { user: contextUser } = useUser();
+    const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+  
+    useEffect(() => {
+      if (other_user) {
+        setUser(other_user);
+      } else if (contextUser) {
+        setUser(contextUser);
+      }
+    }, [other_user, contextUser]);
+  
   const education: Education[] | undefined = user?.education;
 
   const [isOpen, setIsOpen] = useState(false)
@@ -45,7 +58,7 @@ export default function EducationSection() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Education</h2>
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full"
+          {!other_user && <Button variant="ghost" size="icon" className="rounded-full"
           onClick={() => {
             setInstitute("")
               setDegree_type("")
@@ -60,10 +73,8 @@ export default function EducationSection() {
           }}
           >
             <PlusIcon className="h-5 w-5" />
-          </Button>
-          {/* <Button variant="ghost" size="icon" className="rounded-full">
-            <PencilIcon className="h-5 w-5" />
-          </Button> */}
+          </Button>}
+        
         </div>
       </div>
 
@@ -72,19 +83,11 @@ export default function EducationSection() {
           className="flex flex-col sm:flex-row gap-4 mb-6 pb-6 border-b "
           key={index}
         >
-          {/* <div className="flex-shrink-0 mb-2 sm:mb-0">
-            <Image
-              src="/placeholder.svg?height=64&width=64"
-              alt="University Logo"
-              className="rounded object-contain"
-              width={64}
-              height={64}
-            />
-          </div> */}
+      
           <div className=" w-full">
             <div className="flex items-center justify-between">
             <h3 className="font-semibold">{item.institute}</h3>
-            <Button variant="ghost" size="icon" className="rounded-full"
+           {!other_user &&  <Button variant="ghost" size="icon" className="rounded-full"
             onClick={() => {
               setInstitute(item.institute)
               setDegree_type(item.degree_type)
@@ -101,7 +104,7 @@ export default function EducationSection() {
 
             >
             <PencilIcon className="h-5 w-5" />
-          </Button>
+          </Button>}
             </div>
            {item.degree_type && item.subject && <p className="text-gray-700">
               {item.degree_type}, {item.subject}

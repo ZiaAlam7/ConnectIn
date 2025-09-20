@@ -26,9 +26,6 @@ export default function ProfilePage() {
             <SkillsSection />
             <LanguagesSection/>
           </div>
-          {/* <div className="lg:col-span-1">
-            <ProfileSidebar />
-          </div> */}
         </div>
       </Container>
 

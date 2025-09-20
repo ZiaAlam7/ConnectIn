@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { ObjectId } from "mongoose";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import WorkModal from "../profile_modals/WorkModal";
 
 interface Work {
@@ -20,8 +20,24 @@ interface Work {
   _id: ObjectId;
 }
 
-export default function ExperienceSection() {
-  const { user }: any = useUser();
+interface Other_User_Props {
+  other_user?: any;
+}
+
+
+export default function ExperienceSection({ other_user }: Other_User_Props) {
+  const { user: contextUser } = useUser();
+    const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+  
+    // if `other_user` changes, update
+    useEffect(() => {
+      if (other_user) {
+        setUser(other_user);
+      } else if (contextUser) {
+        setUser(contextUser);
+      }
+    }, [other_user, contextUser]);
+    
   const work: Work[] | undefined = user?.work;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -78,7 +94,7 @@ export default function ExperienceSection() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Experience</h2>
         <div className="flex gap-2">
-          <Button
+          {!other_user && <Button
             variant="ghost"
             size="icon"
             className="rounded-full"
@@ -98,7 +114,7 @@ export default function ExperienceSection() {
             }}
           >
             <PlusIcon className="h-5 w-5" />
-          </Button>
+          </Button>}
         </div>
       </div>
 
@@ -121,7 +137,7 @@ export default function ExperienceSection() {
               <div className="w-full">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold">{item.job_title}</h3>
-                  <Button
+                  {!other_user && <Button
                     variant="ghost"
                     size="icon"
                     className="rounded-full"
@@ -142,7 +158,7 @@ export default function ExperienceSection() {
                     }}
                   >
                     <PencilIcon className="h-5 w-5" />
-                  </Button>
+                  </Button>}
                 </div>
                 {item.company_name && (
                   <p className="text-gray-700">{item.company_name}</p>

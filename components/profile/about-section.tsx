@@ -1,18 +1,33 @@
 "use client";
 
 import { PencilIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import axios from "axios";
 
-export default function AboutSection() {
-  const { user }: any = useUser();
+interface Other_User_Props {
+  other_user?: any;
+}
+
+export default function AboutSection({ other_user }: Other_User_Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const about = user?.about;
   const [tempText, setTempText] = useState("");
   const [target, setTarget] = useState("about");
 
+  const { user: contextUser } = useUser();
+  const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+
+  // if `other_user` changes, update
+  useEffect(() => {
+    if (other_user) {
+      setUser(other_user);
+    } else if (contextUser) {
+      setUser(contextUser);
+    }
+  }, [other_user, contextUser]);
+
+  const about = user?.about;
   const openModal = () => {
     setTempText(about);
     setIsOpen(true);
@@ -69,14 +84,15 @@ export default function AboutSection() {
           <div className="bg-white rounded-xl shadow p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">About</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                onClick={openModal}
-              >
-                <PencilIcon className="h-5 w-5" />
-              </Button>
+              <div className="flex justify-end gap-2 mb-4 pt-4">
+                <div className="rounded-full">
+                  {other_user ? (
+                    <div className="h-4 w-4"></div>
+                  ) : (
+                    <PencilIcon className="h-4 w-4 cursor-pointer" />
+                  )}
+                </div>
+              </div>
             </div>
 
             <p className="text-gray-700 whitespace-pre-line">{about}</p>
@@ -104,23 +120,25 @@ export default function AboutSection() {
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
-                Add a Summary about yourself
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-md  font-bold bg-yellow-400"
-                onClick={openModal}
-              >
-                Add
-              </Button>
-            </div>
+          {!other_user && (
+            <div className="bg-white rounded-xl shadow p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">
+                  Add a Summary about yourself
+                </h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-md  font-bold bg-yellow-400"
+                  onClick={openModal}
+                >
+                  Add
+                </Button>
+              </div>
 
-            <p className="text-gray-700 whitespace-pre-line">{about}</p>
-          </div>
+              <p className="text-gray-700 whitespace-pre-line">{about}</p>
+            </div>
+          )}
         </div>
       )}
     </>

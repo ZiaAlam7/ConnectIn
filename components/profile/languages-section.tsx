@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -18,11 +18,26 @@ type User = {
   language: Language[];
 };
 
-export default function LanguageSection() {
+interface Other_User_Props {
+  other_user?: any;
+}
+
+
+export default function LanguageSection({ other_user }: Other_User_Props) {
 
   const router = useRouter();
 
-  const { user } = useUser() as { user: User | null };
+   const { user: contextUser } = useUser();
+      const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
+    
+      useEffect(() => {
+        if (other_user) {
+          setUser(other_user);
+        } else if (contextUser) {
+          setUser(contextUser);
+        }
+      }, [other_user, contextUser]);
+
   const languages = user?.language ?? [];
 
   const visibleLanguages = languages.slice(0, 2);
@@ -40,7 +55,7 @@ export default function LanguageSection() {
 
         <CardHeader className="flex  flex-row items-center justify-between pb-2">
           <h2 className="text-xl font-semibold">Languages</h2>
-          <div className="flex items-center gap-2">
+          {!other_user && <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
@@ -56,11 +71,11 @@ export default function LanguageSection() {
               
               />
             </Button>
-          </div>
+          </div>}
         </CardHeader>
         <CardContent className="p-0 ">
           <div>
-            {visibleLanguages.map((language, index) => (
+            {visibleLanguages.map((language:any, index:number) => (
               <div
                 key={index}
                 className={`px-6 py-4 ${
@@ -78,7 +93,8 @@ export default function LanguageSection() {
               <Button
                 variant="ghost"
                 className="flex items-center gap-1 text-muted-foreground"
-                onClick={() => router.push('/profile/languageUpdate')}
+                onClick={() => !other_user ? router.push(`/profile/languageUpdate`) : router.push(`/profile/${user.user_id}/languageUpdate`)}
+                
               >
                 Show all {languages.length} languages
                 <ArrowRight className="h-4 w-4" />
