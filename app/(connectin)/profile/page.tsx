@@ -11,8 +11,10 @@ import { Container } from "@/components/layout/container"
 import { useUser } from "@/context/UserContext";
 
 
+
 export default function ProfilePage() {
   const { user }: any = useUser();
+
 
   return (
       <Container>

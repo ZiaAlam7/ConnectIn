@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/ui/navbar";
 import logo from "../../public/Connectin_logo.png";
 import Image from "next/image";
@@ -28,11 +31,18 @@ export default function RegistrationLayout({
   //   fetchUserDetail();
   // }, []);
 
+
+  const pathname = usePathname();
+
+  // to check if i am on the messaging page
+  const hideNavbar = pathname.startsWith("/messaging");
+
   return (
     <>
-    <div className="bg-gray-50 min-h-screen pb-16">
-        <Navbar/>
-      <main>{children}</main>
+    {/* <div className="bg-gray-50 min-h-screen pb-16"> */}
+    <div className="bg-gray-50 min-h-screen">
+         {!hideNavbar && <Navbar />}
+      <main >{children}</main>
       </div>
     </>
   );
