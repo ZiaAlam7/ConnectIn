@@ -31,10 +31,11 @@ export default function ProfileCard() {
   const fullName = `${user?.first_name} ${user?.last_name}`;
   const userProfileImage = user?.profile_image;
   const userCoverImage = user?.cover_image;
-  const headline = user?.headline;
+  // const headline = user?.headline;
   const country = user?.address?.country;
   const city = user?.address?.city;
   const education = user?.education[0];
+   const headline = `${user?.work[0].job_title} at ${user?.work[0].company_name}`;
 
   return (
     <div className="w-[15rem] h-fit bg-white rounded-xl shadow-md overflow-hidden border ">

@@ -1,17 +1,22 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Send } from "lucide-react";
+import { Send, MoreVertical } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
 import { IKImage } from "imagekitio-next";
 import { useUser } from "@/context/UserContext";
 import io from "socket.io-client";
-import { Content } from "next/font/google";
+import StartChat from "@/components/ui/start-chat";
+
+interface Message {
+  _id: string;
+  content: string;
+}
 
 export interface IChat {
   _id: string;
-  lastMessage: string;
+  lastMessage: Message;
   participants: any[];
   unread: number;
   createdAt: string;
@@ -36,10 +41,11 @@ export default function ChatApp() {
   const [messages, setMessages] = useState<any[]>([]);
   const [conversations, setConversations] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [targetChatId, setTargetChatId] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const { user }: any = useUser();
 
-  // 🔥 Send message
   const handleSend = async () => {
     if (!input.trim() || !activeChat?._id) return;
 
@@ -69,7 +75,23 @@ export default function ChatApp() {
     }
   };
 
-  // 🔥 Fetch chats & messages
+  const handleDeleteChat = async (conversationId: string) => {
+    try {
+      const response = await axios.delete("/api/delete-conversation", {
+        data: { conversationId },
+      });
+
+      if (response.status === 200) {
+        console.log("✅ Conversation deleted:", response.data.conversation);
+        window.location.reload();
+      } else {
+        console.warn("Unexpected response:", response);
+      }
+    } catch (err) {
+      console.error("❌ Failed to delete conversation:", err);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -88,11 +110,10 @@ export default function ChatApp() {
     fetchData();
   }, []);
 
-  // 🔥 Socket setup
   useEffect(() => {
     if (!user?._id) return;
 
-    const newSocket = io("http://localhost:4000", {
+    const newSocket = io("http://localhost:3000", {
       transports: ["websocket"],
     });
     setSocket(newSocket);
@@ -102,9 +123,7 @@ export default function ChatApp() {
       newSocket.emit("register", user._id);
     });
 
-    // Handle incoming message
     newSocket.on("private-message", (msg: IMessage) => {
-      // Normalize shape
       const normalizedMsg = {
         _id: msg._id || Math.random().toString(36).slice(2),
         content: msg.content,
@@ -115,7 +134,6 @@ export default function ChatApp() {
 
       setMessages((prev: any) => [...prev, normalizedMsg]);
 
-      // 5️⃣ Update the chat list (if needed)
       setConversations((prevConvos: any) =>
         Array.isArray(prevConvos)
           ? prevConvos.map((chat: any) =>
@@ -127,23 +145,32 @@ export default function ChatApp() {
       );
     });
 
-    setActiveChat;
-
     return () => {
       newSocket.disconnect();
     };
   }, [user?._id]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, activeChat]);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".menu-container")) setTargetChatId(null);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="flex max-h-[100vh] min-h-[100vh] bg-green-500 ">
+    <div className="flex flex-col sm:flex-row max-h-[100vh] min-h-[100vh]">
       {/* Sidebar */}
-      <div className="w-1/3 border-r border-gray-300 hidden sm:flex flex-col max-h-[100vh]  bg-red-400">
+      <div
+        className={`${
+          activeChat ? "hidden sm:flex" : "flex"
+        } w-full sm:w-1/3 border-r border-gray-300 flex-col max-h-[100vh] bg-gray-300`}
+      >
         <div className="p-2 flex gap-4">
           <Link
             href="/home"
@@ -151,19 +178,15 @@ export default function ChatApp() {
           >
             Home
           </Link>
-          <input
-            type="text"
-            placeholder="Search or start new chat"
-            className="w-full p-2 rounded-lg border border-gray-300"
-          />
+          <StartChat />
         </div>
 
-        <div className="flex-1 overflow-y-scroll">
+        <div className="flex-1 p-2">
           {conversations?.map((chat: IChat) => (
             <div
               key={chat._id}
-              className={`p-3 cursor-pointer border-b border-gray-200 hover:bg-gray-200 ${
-                activeChat?._id === chat._id ? "bg-gray-200" : ""
+              className={`p-3 my-1 cursor-pointer border-b border-white hover:bg-gray-200 ${
+                activeChat?._id === chat._id ? "bg-gray-100" : ""
               }`}
               onClick={() => setActiveChat(chat)}
             >
@@ -172,9 +195,9 @@ export default function ChatApp() {
                   <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
                     <IKImage
                       src={
-                        chat.participants[0].full_name !== user.full_name
-                          ? chat.participants[0].profile_image
-                          : chat.participants[1].profile_image
+                        chat.participants[0]?.full_name !== user?.full_name
+                          ? chat.participants[0]?.profile_image
+                          : chat.participants[1]?.profile_image
                       }
                       alt="Profile Picture"
                       className="object-cover w-full h-full rounded-full"
@@ -182,15 +205,44 @@ export default function ChatApp() {
                       height={1200}
                     />
                   </div>
-                  <span className="font-medium">
-                    {chat.participants[0].full_name !== user.full_name
-                      ? chat.participants[0].full_name
-                      : chat.participants[1].full_name}
+                  <span className="font-medium text-sm sm:text-base">
+                    {chat.participants[0]?.full_name !== user?.full_name
+                      ? chat.participants[0]?.full_name
+                      : chat.participants[1]?.full_name}
                   </span>
                 </div>
-                <span className="text-xs text-gray-500">
-                  {new Date(chat?.createdAt).toLocaleDateString()}
-                </span>
+
+                <div className="flex gap-1 items-center">
+                  <span className="text-xs text-gray-500 hidden sm:inline">
+                    {new Date(chat?.createdAt).toLocaleDateString()}
+                  </span>
+
+                  <div className="relative menu-container" ref={menuRef}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTargetChatId(chat._id);
+                      }}
+                      className="p-1 hover:bg-gray-100 rounded-full"
+                    >
+                      <MoreVertical className="w-5 h-5 text-gray-600" />
+                    </button>
+
+                    {chat._id === targetChatId && (
+                      <div
+                        className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                          onClick={() => handleDeleteChat(chat._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <p className="text-sm text-gray-600 truncate ml-10">
                 {chat?.lastMessage?.content || "No messages yet"}
@@ -201,9 +253,19 @@ export default function ChatApp() {
       </div>
 
       {/* Chat Window */}
-      <div className="flex-1 flex flex-col max-h-[100vh] bg-yellow-600">
+      <div
+        className={`flex-1 flex flex-col max-h-[100vh] ${
+          !activeChat ? "hidden sm:flex" : "flex"
+        }`}
+      >
         {/* Header */}
-        <div className="p-3 border-b border-gray-300 bg-white font-medium flex items-center space-x-2 bg-yellow-600">
+        <div className="p-3 border-b border-gray-300 bg-white font-medium flex items-center space-x-2">
+          <button
+            onClick={() => setActiveChat(null)}
+            className="sm:hidden text-green-600 font-semibold"
+          >
+            ← Back
+          </button>
           {activeChat && (
             <>
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
@@ -219,7 +281,7 @@ export default function ChatApp() {
                   height={1200}
                 />
               </div>
-              <span>
+              <span className="truncate">
                 {activeChat?.participants?.[0]?._id !== user?._id
                   ? activeChat?.participants?.[0]?.full_name
                   : activeChat?.participants?.[1]?.full_name}
@@ -229,7 +291,7 @@ export default function ChatApp() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-purple-500 overflow-x-hidden">
+        <div className="flex-1 overflow-y-auto p-3 space-y-2 overflow-x-hidden">
           {messages
             ?.filter((msg) => msg.chat === activeChat?._id)
             .map((msg) => (
@@ -240,7 +302,7 @@ export default function ChatApp() {
                 }`}
               >
                 <div
-                  className={`p-2 rounded-lg max-w-xs text-sm ${
+                  className={`p-2 rounded-lg max-w-[80%] text-sm break-words ${
                     msg.sender === user._id
                       ? "bg-green-200 text-right"
                       : "bg-white border"
@@ -248,7 +310,10 @@ export default function ChatApp() {
                 >
                   <p>{msg.content}</p>
                   <span className="text-xs text-gray-500 block">
-                    {new Date(msg.createdAt).toLocaleTimeString()}
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </div>
               </div>
@@ -257,13 +322,13 @@ export default function ChatApp() {
         </div>
 
         {/* Input */}
-        <div className="p-3 border-t border-gray-300 bg-white flex">
+        <div className="p-3 border-t border-gray-300 bg-white flex items-center gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message"
-            className="flex-1 p-2 border rounded-lg mr-2"
+            className="flex-1 p-2 border rounded-lg text-sm"
           />
           <button
             onClick={handleSend}

@@ -47,7 +47,7 @@ export default function LanguageSection({ other_user }: Other_User_Props) {
 
   return (
     <>
-      <Card className="w-full">
+      <Card className="w-full mb-5">
         <LanguageModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

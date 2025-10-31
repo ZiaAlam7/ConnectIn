@@ -5,12 +5,14 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 
-export default function SearchPeople() {
-  const { user }: any = useUser();
+
+export default function StartChat() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for dropdown
+    const { user }: any = useUser();
+  
 
   // API call to get the user image and name
   const [users, setUsers] = useState<any[]>([]);
@@ -19,11 +21,10 @@ export default function SearchPeople() {
     const fetchUser = async () => {
       try {
         const res = await axios.get("/api/fetch-users");
-        // console.log(res.data.allUsers)
         const data: any = res.data.allUsers;
         setUsers(data);
       } catch (error) {
-        console.error("Failed to fetch post post_context:", error);
+        console.error("Failed to fetch users", error);
       }
     };
 
@@ -31,9 +32,8 @@ export default function SearchPeople() {
   }, []);
 
   // Filter options based on search input
-  const filteredUsers = (users ?? []).filter(
-    (user1: any) =>
-      user1.full_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+  const filteredUsers = (users ?? []).filter((user1: any) =>
+    user1.full_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       user1.user_id !== user?.user_id
   );
 
@@ -54,6 +54,19 @@ export default function SearchPeople() {
     };
   }, []);
 
+ const createConversation = async (currentUserId:any, loggedUserId:any) => {
+  try {
+    const res = await axios.post("/api/create-conversation", {
+      participants: [currentUserId, loggedUserId],
+    });
+
+    window.location.reload();
+  } catch (error) {
+    console.error("Failed to create conversation:", error);
+  }
+};
+
+
   return (
     <div className="relative w-full" ref={dropdownRef}>
       <button
@@ -61,7 +74,7 @@ export default function SearchPeople() {
         onClick={() => setIsOpen(!isOpen)}
         className="w-full p-2 text-nowrap bg-white border rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
       >
-        Search People
+        Start a new conversation
       </button>
       {isOpen && (
         <div className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-md max-h-48 overflow-y-auto z-[100]">
@@ -80,7 +93,7 @@ export default function SearchPeople() {
                   onClick={() => {
                     setIsOpen(false);
                     setSearchTerm("");
-                    router.push(`/profile/${option.user_id}`);
+                    createConversation(option._id, user._id);
                   }}
                   className="flex items-center gap-2 p-2 hover:bg-gray-200 cursor-pointer"
                 >

@@ -19,7 +19,7 @@ const SignupForm = () => {
   });
 
   const handlePassword = (newValue: string) => {
-    setFormData({ ...formData, password: newValue })
+    setFormData({ ...formData, password: newValue });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,19 +30,11 @@ const SignupForm = () => {
     e.preventDefault();
 
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
+      await signIn("credentials", {
         email: formData.email,
         password: formData.password,
+        callbackUrl: "/home",
       });
-  
-      if (result?.error) {
-        // setError(result.error)
-        toast({ description: result.error });
-      } else {
-        router.push("/home");
-      }
-  
     } catch (error: any) {
       toast({ description: error });
     }
@@ -50,7 +42,7 @@ const SignupForm = () => {
 
   const handleGoogleSignin = () => {
     signIn("google", { callbackUrl: "/home" });
-  }
+  };
 
   return (
     <>
@@ -61,7 +53,6 @@ const SignupForm = () => {
         <div className="max-w-sm  p-6 bg-white shadow-lg rounded-lg min-w-[25rem]">
           <h2 className="text-3xl font-bold mb-8  text-black">Sign in</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-
             <input
               type="email"
               name="email"
@@ -71,11 +62,18 @@ const SignupForm = () => {
               className="w-full p-2 border text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-primaryGreen"
               required
             />
-            <Password value={formData.password} handlePassword={handlePassword}/>
+            <Password
+              value={formData.password}
+              handlePassword={handlePassword}
+            />
             <div>
-           <Link href="/forgot-password" className="text-primaryGreen hover:underline font-[600]">
-              Forgot Password
-            </Link></div>
+              <Link
+                href="/forgot-password"
+                className="text-primaryGreen hover:underline font-[600]"
+              >
+                Forgot Password
+              </Link>
+            </div>
             <button
               type="submit"
               className="w-full text-md font-bold bg-primaryGreen text-white py-3 rounded-full hover:bg-primaryDark transition"
@@ -85,9 +83,19 @@ const SignupForm = () => {
           </form>
           <div className="text-center my-4">or</div>
           <div className=" flex justify-center">
-            <Image src={google_logo} alt="google-logo" width={50} className="border border-gray-300"/>
-          <button onClick={handleGoogleSignin} className="bg-blue-600  text-white px-2 ">Sign in with google</button>
-        </div>
+            <Image
+              src={google_logo}
+              alt="google-logo"
+              width={50}
+              className="border border-gray-300"
+            />
+            <button
+              onClick={handleGoogleSignin}
+              className="bg-blue-600  text-white px-2 "
+            >
+              Sign in with google
+            </button>
+          </div>
           <div className="mt-6 border-t pt-4 text-center text-gray-600">
             New to ConnectIn?{" "}
             <Link href="/signup" className="text-primaryGreen hover:underline">
@@ -96,7 +104,6 @@ const SignupForm = () => {
             now
           </div>
         </div>
-       
       </div>
     </>
   );

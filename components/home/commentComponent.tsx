@@ -26,12 +26,12 @@ const CommentComponent: React.FC<CommentProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-const commentId = comment._id
-const commentAuthor = comment.userId._id
-const profileImage = comment.userId.profile_image;
-const fullName = comment.userId.full_name;
-const headline = comment.userId.headline;
-const text = comment.text;
+ const commentId = comment?._id;
+  const commentAuthor = comment?.userId?._id;
+  const profileImage = comment?.userId?.profile_image ?? "/default-avatar.png";
+  const fullName = comment?.userId?.full_name ?? "Unknown User";
+  const headline = comment?.userId?.headline ?? "";
+  const text = comment?.text ?? "";
 
 
 

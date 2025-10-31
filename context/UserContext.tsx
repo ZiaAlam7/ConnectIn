@@ -7,7 +7,7 @@ import axios from "axios";
 
 // Define the User type (customize it based on your API response)
 type User = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   profileImage: string;

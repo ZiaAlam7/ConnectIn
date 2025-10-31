@@ -27,7 +27,8 @@ export default function AboutSection({ other_user }: Other_User_Props) {
     }
   }, [other_user, contextUser]);
 
-  const about = user?.about;
+
+  const about = user?.about ?? "";
   const openModal = () => {
     setTempText(about);
     setIsOpen(true);
@@ -67,7 +68,7 @@ export default function AboutSection({ other_user }: Other_User_Props) {
               <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-xl z-50">
                 <h2 className="text-xl font-semibold mb-4">Edit Text</h2>
                 <textarea
-                  className="w-full resize-none h-36 p-2 border rounded mb-4"
+                  className="w-full resize-none outline-[var(--mainGreen)] h-36 p-2 border rounded mb-4"
                   value={tempText}
                   onChange={(e) => setTempText(e.target.value)}
                 />
@@ -75,7 +76,7 @@ export default function AboutSection({ other_user }: Other_User_Props) {
                   <Button variant="ghost" onClick={() => setIsOpen(false)}>
                     Cancel
                   </Button>
-                  <Button onClick={saveChanges}>Save</Button>
+                  <Button onClick={saveChanges} className="bg-[var(--mainGreen)]" >Save</Button>
                 </div>
               </div>
             </div>
@@ -89,7 +90,9 @@ export default function AboutSection({ other_user }: Other_User_Props) {
                   {other_user ? (
                     <div className="h-4 w-4"></div>
                   ) : (
-                    <PencilIcon className="h-4 w-4 cursor-pointer" />
+                    <PencilIcon className="h-4 w-4 cursor-pointer"
+                      onClick={openModal}
+                    />
                   )}
                 </div>
               </div>

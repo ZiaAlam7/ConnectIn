@@ -90,11 +90,9 @@ export default function PostModal({ isOpen, onClose }: PostModalProps) {
       setPost([newPost, ...post]);
       setPostMedia("")
     
-    } catch (error: any) {
-      console.error(
-        error.response?.data || error.message
-      );
-    }
+    } catch (err) {
+        console.error("Failed to post: ", err);
+      }
   };
 
   if (!isOpen) return null;

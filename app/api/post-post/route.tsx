@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const email = session.user.email;
     console.log(email);
 
-    const { target, values, postId, commentId, userId } = await request.json();
+    const { post_ID, target, values, postId, commentId, userId } = await request.json();
 
     console.log("This is target: ", target);
     console.log("This is values: ", values);
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       try {
         const newPost = await Post.create(values);
         await newPost.save();
-        const populatedPost = await Post.findOne(newPost.postId)
+        const populatedPost = await Post.findOne({ postId: newPost.postId })
           .populate("userId", "full_name headline profile_image")
           .populate("comments.userId", "full_name headline profile_image");
 
@@ -169,16 +169,16 @@ export async function POST(request: NextRequest) {
     
     try {
       if (target === "delete post") {
-        const post = await Post.findOne({ postId });
+        const post = await Post.findById(post_ID);
 
-        if (String(post.userId) !== userId) {
+        if (String(post.userId) !== userId && String(post.reposted_by._id) !== userId) {
           return NextResponse.json(
             { message: "Unauthorized" },
             { status: 403 }
           );
         }
 
-        await Post.findOneAndDelete({ postId });
+        await Post.findByIdAndDelete(post_ID);
         console.log("Post deleted");
         return NextResponse.json(
           { message: "Post deleted successfully", success: true },

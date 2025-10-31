@@ -18,7 +18,7 @@ export default function ProfilePage() {
 
   return (
       <Container>
-        <div className=" pt-6">
+        <div className=" pt-6 pb-8">
           <div className=" space-y-6 w-[75%] mx-auto">  
           <ProfileHeader/>
             <AboutSection />

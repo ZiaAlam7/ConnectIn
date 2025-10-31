@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     const allConversation = await Conversation.find()
     .populate('lastMessage', 'content')
     .populate('participants', 'userId full_name profile_image')
+     .sort({ updatedAt: -1 })
 
 
     if (!allConversation) {

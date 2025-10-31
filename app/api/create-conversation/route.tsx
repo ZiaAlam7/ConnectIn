@@ -5,33 +5,44 @@ import connectToDatabase from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth_options";
 
-
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     await connectToDatabase();
 
     const body = await request.json();
-    const { _id, participants, lastMessage, unread } = body;
+    const { participants } = body;
 
-    // Basic validation
+
     if (
       !participants ||
       !Array.isArray(participants) ||
-      participants.length < 2
+      participants.length !== 2
     ) {
       return NextResponse.json(
-        { error: "At least two participants are required" },
+        { error: "Exactly two participants are required" },
         { status: 400 }
       );
     }
 
-    // Create new conversation
+    // Sort participant IDs so order doesn’t matter
+    const sortedParticipants = [...participants].sort();
+
+
+    const existingConversation = await Conversation.findOne({
+      participants: { $all: sortedParticipants, $size: 2 },
+    });
+
+    if (existingConversation) {
+      return NextResponse.json(
+        { message: "Conversation already exists", conversation: existingConversation },
+        { status: 200 }
+      );
+    }
+
+    // Otherwise, create a new conversation
     const conversation = await Conversation.create({
-      participants,
-      lastMessage,
-      unread,
+      participants: sortedParticipants,
     });
 
     return NextResponse.json(

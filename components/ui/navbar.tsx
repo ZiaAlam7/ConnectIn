@@ -54,34 +54,12 @@ const navItems: NavItem[] = [
     href: "/messaging",
     icon: MessageSquare,
   },
-  {
-    title: "Notifications",
-    href: "/notifications",
-    icon: Bell,
-  },
+  
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   
-
-  //   const [profileImg, setProfileImg] = useState(
-  //     "https://ik.imagekit.io/ConnectIn/ProfilePlaceholder.jpg?updatedAt=1743518582814"
-  //   );
-
-  // useEffect(() => {
-  //   const fetchUserDetail = async () => {
-  //     try {
-  //       const response = await axios.get('/api/user-detail'); // Request to Next.js API route
-  //      const imgurl =  response.data.detail.profile_image
-  //       setProfileImg(imgurl)
-  //     } catch (err) {
-  //       console.log(err)
-  //     }
-  //   };
-
-  //   fetchUserDetail();
-  // }, []);
 
   const { user }: any = useUser();
   const userProfileImage = user?.profile_image;
@@ -98,7 +76,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full mx-auto border-b bg-background p-1">
       <div className="container flex h-14 items-center px-4 sm:px-6 max-w-[75%] mx-auto ">
         <div className="flex items-center gap-3 md:gap-5 w-[30%]">
-          <Link href="/" className="flex items-center">
+          <Link href="/home" className="flex items-center">
             <img
               src="/ConnectIn icon.jpg"
               alt="ConnectIn Logo"
@@ -113,27 +91,6 @@ export function Navbar() {
             
           </div>
         </div>
-
-        {/* Mobile search button */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden ml-2">
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="top" className="pt-14">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search"
-                className="pl-8"
-                autoFocus
-              />
-            </div>
-          </SheetContent>
-        </Sheet>
 
         <div className="flex flex-1 items-center justify-end space-x-1">
           <nav className="hidden md:flex items-center space-x-1">
@@ -182,9 +139,6 @@ export function Navbar() {
                 <div className="grid gap-6 py-6">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{fullName}</p>
-                    <p className="text-xs text-muted-foreground">
-                      View Profile
-                    </p>
                   </div>
                   <nav className="grid gap-3">
                     {navItems.map((item) => (
@@ -247,15 +201,6 @@ export function Navbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/profile">View Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/settings">Settings & Privacy</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/help">Help</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/language">Language</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>

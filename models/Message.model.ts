@@ -4,7 +4,6 @@ export interface IMessage extends Document {
   sender: Types.ObjectId; // ref to UserDetail
   content: string;
   chat: Types.ObjectId; // ref to Conversation
-  status?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,7 +12,7 @@ const messageSchema = new Schema<IMessage>(
   {
     sender: {
       type: Schema.Types.ObjectId,
-      ref: "Conversation",
+      ref: "UserDetail",
       required: true,
     },
     content: {
@@ -24,11 +23,7 @@ const messageSchema = new Schema<IMessage>(
       type: Schema.Types.ObjectId,
       ref: "Conversation",
       required: true,
-    },
-    status: {
-      type: String,
-      default: "sent",
-    },
+    }
   },
   { timestamps: true }
 );

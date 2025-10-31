@@ -82,7 +82,7 @@ export function ProfileImageOverlay({
        onClick={(e) => e.stopPropagation()}
       >
         <CardHeader className="flex flex-row items-center justify-between p-4 space-y-0">
-          <h3 className="text-lg font-medium">Profile Image</h3>
+          <h3 className="text-lg font-medium">{imageType === "profile_image" ? "Profile Image" : "Cover Image"}</h3>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="w-4 h-4" />
             <span className="sr-only">Close</span>

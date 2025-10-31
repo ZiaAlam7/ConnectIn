@@ -13,6 +13,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Playwrite_BE_VLG } from "next/font/google";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 import { MoreVertical } from "lucide-react";
 import { useRef, useEffect } from "react";
@@ -56,7 +57,9 @@ export default function PostList({ postP }: any) {
   const userId = user?._id;
   const PostUserLiked = user?.liked;
   const { post, setPost }: any = usePost();
-    const { toast } = useToast();
+  const { toast } = useToast();
+  const router = useRouter();
+
 
   const [commentPostId, setCommentPostId]: any = useState();
   const [likePostId, setLikePostId] = useState();
@@ -173,13 +176,13 @@ export default function PostList({ postP }: any) {
     }
   };
 
-  const handleDeletePost = async (postId: string) => {
-    console.log("Trying to delete post:", postId);
+  const handleDeletePost = async (post_ID: any) => {
+    console.log("Trying to delete post:", post_ID);
 
     try {
       await axios.post(
         "/api/post-post",
-        { target: "delete post", postId, userId },
+        { target: "delete post", post_ID, userId },
         {
           headers: {
             "Content-Type": "application/json",
@@ -188,7 +191,7 @@ export default function PostList({ postP }: any) {
       );
 
       // Update the context immediately
-      const updatedPosts = post.filter((p: PostType) => p.postId !== postId);
+      const updatedPosts = post.filter((p: PostType) => p._id !== post_ID);
       setPost(updatedPosts);
       setMenuOpenPostId(null);
       console.log("Post deleted");
@@ -201,16 +204,19 @@ export default function PostList({ postP }: any) {
   };
 
   const handleRepost = async (postP: any) => {
-console.log(postP)
+    // console.log(postP);
 
     const values = {
       postId: postP.postId,
       content: postP.content,
       image: postP.image,
       userId: postP.userId,
+      likes: postP.likes,
+      comments: postP.comments,
       reposted_by: userId,
     };
     const target = "new post";
+    
 
     try {
       const response = await axios.post(
@@ -222,15 +228,12 @@ console.log(postP)
           },
         }
       );
-      const newPost = response.data.data
+      const newPost = response.data.data;
 
       setPost([newPost, ...post]);
       // setPostMedia("")
-    
     } catch (error: any) {
-      console.error(
-        error.response?.data || error.message
-      );
+      console.error(error.response?.data || error.message);
     }
   };
 
@@ -260,8 +263,18 @@ console.log(postP)
   return (
     <>
       <div className="w-full  mx-auto py-4 bg-white rounded-lg border-2 ">
+        {postP.reposted_by !== null && (
+          <div className="px-4 pb-2 italic font-extralight">
+            Reposted By {postP.reposted_by.full_name}
+          </div>
+        )}
         <div className="flex items-center justify-between px-4">
-          <div className="flex items-center space-x-3">
+          <div
+            className="flex items-center space-x-3  cursor-pointer"
+            onClick={() => {
+              router.push(`/profile/${postP.userId.user_id.toString()}`);
+            }}
+          >
             <IKImage
               src={postP.userId.profile_image}
               alt="Profile Picture"
@@ -269,6 +282,7 @@ console.log(postP)
               width={50}
               height={50}
             />
+
             <div>
               <p className="font-semibold text-sm leading-tight">
                 {postP.userId?.full_name}
@@ -301,9 +315,9 @@ console.log(postP)
                 onClick={(e) => e.stopPropagation()} // Prevents outside click handler
               >
                 <button
-                  disabled={postP.userId._id !== userId}
+                  disabled={postP.userId._id !== userId && postP?.reposted_by?._id !== user._id}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
-                  onClick={() => handleDeletePost(postP.postId)}
+                  onClick={() => handleDeletePost(postP._id.toString())}
                 >
                   Delete
                 </button>
@@ -364,8 +378,9 @@ console.log(postP)
             >
               <FaRegCommentDots /> Comment
             </button>
-            <button className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
-             onClick={() =>  handleRepost(postP)}
+            <button
+              className="flex items-center gap-1 hover:text-[var(--mainGreenDark)]"
+              onClick={() => handleRepost(postP)}
             >
               <FaShare /> Repost
             </button>

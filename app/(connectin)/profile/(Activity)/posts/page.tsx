@@ -18,9 +18,9 @@ const page = () => {
 
   return (
     
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-[50vw] m-auto">
       {filteredPosts.map((item: any, index: any) => (
-        <div key={index}>
+        <div key={index} >
           <Post postP={item} />
         </div>
       ))}

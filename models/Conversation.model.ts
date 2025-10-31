@@ -1,9 +1,8 @@
 import { Schema, model, models, Document, Types } from "mongoose";
 
 export interface IConversation extends Document {
-  lastMessage?: Types.ObjectId;
+  lastMessage?: Types.ObjectId | null;
   participants: Types.ObjectId[];
-  unread: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,6 +12,7 @@ const conversationSchema = new Schema<IConversation>(
     lastMessage: {
       type: Schema.Types.ObjectId,
       ref: "Message",
+      default: null, 
     },
     participants: [
       {
@@ -21,14 +21,11 @@ const conversationSchema = new Schema<IConversation>(
         required: true,
       },
     ],
-    unread: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );
 
-const Conversation = models.Conversation || model<IConversation>("Conversation", conversationSchema);
+const Conversation =
+  models.Conversation || model<IConversation>("Conversation", conversationSchema);
 
 export default Conversation;

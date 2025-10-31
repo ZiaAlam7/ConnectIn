@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     .sort({ createdAt: -1 })
   //   .skip(skip)
   // .limit(limit)
-    .populate('userId', 'full_name headline profile_image') // post's author
+    .populate('userId', 'user_id full_name headline profile_image') // post's author
     .populate('comments.userId', 'full_name headline profile_image') // comment authors
     .populate('reposted_by', 'full_name')
   

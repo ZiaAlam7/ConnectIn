@@ -6,7 +6,7 @@ const { Server } = require("socket.io");
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
-const port = 4000;
+const port = 3000;
 
 nextApp.prepare().then(() => {
   const app = express();
