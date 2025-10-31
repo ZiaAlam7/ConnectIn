@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Message from "@/models/Message.model";
 
-interface Params {
-  params: { userId: string }; // The other user's ID
-}
-
-export async function GET(req: Request, context: Params) {
+export async function GET(
+  req: Request,
+  context: { params: { userId: string } }
+) {
   try {
     await connectToDatabase();
 
@@ -22,7 +21,6 @@ export async function GET(req: Request, context: Params) {
 
     const otherUserId = context.params.userId;
 
-    // Fetch messages between currentUserId and otherUserId
     const messages = await Message.find({
       $or: [
         { sender: currentUserId, receiver: otherUserId },
