@@ -6,9 +6,10 @@ interface Params {
   params: { userId: string }; // The other user's ID
 }
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: Request, context: Params) {
   try {
     await connectToDatabase();
+
     const { searchParams } = new URL(req.url);
     const currentUserId = searchParams.get("currentUserId");
 
@@ -19,11 +20,13 @@ export async function GET(req: Request, { params }: Params) {
       );
     }
 
-    // Fetch messages between currentUserId and params.userId
+    const otherUserId = context.params.userId;
+
+    // Fetch messages between currentUserId and otherUserId
     const messages = await Message.find({
       $or: [
-        { sender: currentUserId, receiver: params.userId },
-        { sender: params.userId, receiver: currentUserId },
+        { sender: currentUserId, receiver: otherUserId },
+        { sender: otherUserId, receiver: currentUserId },
       ],
     }).sort({ createdAt: 1 }); // oldest → newest
 
