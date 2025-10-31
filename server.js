@@ -7,7 +7,6 @@ const axios = require("axios");
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const nextHandler = nextApp.getRequestHandler();
-const port = 3000;
 
 nextApp.prepare().then(() => {
   const app = express();
@@ -65,7 +64,9 @@ nextApp.prepare().then(() => {
 
   app.use((req, res) => nextHandler(req, res));
 
-  server.listen(port, () =>
-    console.log(`🚀 Socket + Next server running on http://localhost:${port}`)
+  const PORT = process.env.PORT || 3000;
+
+  server.listen(PORT, () =>
+    console.log(`🚀 Socket + Next server running on http://localhost:${PORT}`)
   );
 });
