@@ -1,9 +1,6 @@
-import React from 'react'
+// app/page.tsx
+import { redirect } from "next/navigation";
 
-function page() {
-  return (
-    <div>page</div>
-  )
+export default function HomeRedirect() {
+  redirect("/home");
 }
-
-export default page
