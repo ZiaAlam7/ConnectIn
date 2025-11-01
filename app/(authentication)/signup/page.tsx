@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Password from "@/components/ui/password";
 import Image from "next/image";
-import google_logo from "@/public/google_logo.png";
+// import google_logo from "@/public/google_logo.png";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -69,9 +69,9 @@ const SignupForm = () => {
     }
   };
 
-  const handleGoogleSignup = () => {
-      signIn("google", { callbackUrl: "/home" });
-    }
+  // const handleGoogleSignup = () => {
+  //     signIn("google", { callbackUrl: "/home" });
+  //   }
 
   return (
     <>
@@ -123,11 +123,11 @@ const SignupForm = () => {
               Agree & Join
             </button>
           </form>
-          <div className="text-center my-3">or</div>
+          {/* <div className="text-center my-3">or</div>
           <div className=" flex justify-center">
             <Image src={google_logo} alt="google-logo" width={50} className="border border-gray-300"/>
           <button onClick={handleGoogleSignup} className="bg-blue-600  text-white px-2 ">Sign up with google</button>
-        </div>
+        </div> */}
           <div className="mt-6 border-t pt-4 text-center text-gray-600">
             Already on ConnectIn?{" "}
             <Link href="/signin" className="text-primaryGreen hover:underline">
