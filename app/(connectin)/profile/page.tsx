@@ -19,7 +19,7 @@ export default function ProfilePage() {
   return (
       <Container>
         <div className=" pt-6 pb-8">
-          <div className=" space-y-6 w-[75%] mx-auto">  
+          <div className=" space-y-6 sm:w-[75%] w-[100%] bg-red-500 mx-auto">  
           <ProfileHeader/>
             <AboutSection />
             <ActivitySection />

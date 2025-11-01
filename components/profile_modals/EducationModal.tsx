@@ -132,7 +132,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-lg bg-white p-6 shadow-lg"
+        className="sm:w-full w-[90vw] max-w-xl rounded-lg bg-white p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">

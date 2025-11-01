@@ -102,7 +102,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative bg-white rounded-xl shadow-xl max-w-xl w-full p-6 z-50"
+        className="relative bg-white rounded-xl shadow-xl max-w-xl sm:w-full w-[90vw] p-6 z-50"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">

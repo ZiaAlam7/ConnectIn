@@ -15,12 +15,12 @@ export default function HomePage() {
   return (
     <>
         <PostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
-      <div className="container w-[65%] mx-auto p-4 sm:p-6 flex gap-6">
+      <div className="container w-[95%] sm:w-[65%] mx-auto p-4 sm:p-6 flex gap-6">
         <div className="sticky top-[4rem] h-fit lg:block hidden ">
           <ProfileCard  
         />
         </div>
-        <div className=" w-full">
+        <div className=" w-full ">
           <div>
             <div
              onClick={() => setIsModalOpen(true)}

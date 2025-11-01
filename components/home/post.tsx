@@ -262,7 +262,7 @@ export default function PostList({ postP }: any) {
 
   return (
     <>
-      <div className="w-full  mx-auto py-4 bg-white rounded-lg border-2 ">
+      <div className="w-full  mx-auto py-4 rounded-lg border-2 ">
         {postP.reposted_by !== null && (
           <div className="px-4 pb-2 italic font-extralight">
             Reposted By {postP.reposted_by.full_name}

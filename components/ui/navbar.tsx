@@ -75,7 +75,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full mx-auto border-b bg-background p-1">
       <div className="container flex h-14 items-center px-4 sm:px-6 max-w-[75%] mx-auto ">
-        <div className="flex items-center gap-3 md:gap-5 w-[30%]">
+        <div className="flex items-center gap-3 md:gap-5 sm:w-[30%] w-[95%]">
           <Link href="/home" className="flex items-center">
             <img
               src="/ConnectIn icon.jpg"

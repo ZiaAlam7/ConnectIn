@@ -166,7 +166,7 @@ const WorkModal: React.FC<WorkModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-lg bg-white p-6 shadow-lg max-h-[80vh]  overflow-hidden overflow-y-auto "
+        className="sm:w-full  w-[90vw] max-w-xl rounded-lg bg-white p-6 shadow-lg max-h-[80vh]  overflow-hidden overflow-y-auto "
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4  z-50  ">

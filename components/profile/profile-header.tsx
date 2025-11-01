@@ -131,12 +131,12 @@ const ProfileHeader = ({ other_user }: Other_User_Props) => {
       {/* PROFILE INFO */}
       <div className="px-6 pb-6 relative">
         {/* PROFILE PICTURE */}
-        <div className="absolute -top-20 left-6 border-4 border-white rounded-full shadow-xl sm:left-8">
+        <div className="absolute -top-10 sm:-top-20 left-6 border-4 border-white rounded-full shadow-xl sm:left-8">
           <div className="relative">
             <IKImage
               src={userProfileImage}
               alt="Profile Picture"
-              className="rounded-full object-cover"
+              className="rounded-full object-cover w-[110px] h-[110px] sm:w-[160px] sm:h-[160px]"
               width={160}
               height={160}
             />
@@ -203,8 +203,8 @@ const ProfileHeader = ({ other_user }: Other_User_Props) => {
 
       {/* ✏️ EDIT MODAL */}
       {editOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-lg">
+        <div className="fixed inset-0  z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white p-6 rounded-2xl shadow-xl sm:w-full w-[90vw] max-w-lg">
             <h2 className="text-xl font-semibold mb-4">Edit Profile Info</h2>
 
             <div className="space-y-3">
