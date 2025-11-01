@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
+
 let socket: Socket | null = null;
 
 /**
@@ -11,17 +12,18 @@ export const initSocket = (userId: string): Socket => {
     socket = io("/", {
       path: "/api/socket",
       query: { userId },
-      transports: ["websocket"], // prefer websocket over polling
+      transports: ["websocket"], // prefer websocket
     });
 
     socket.on("connect", () => {
-      console.log("✅ Connected to socket server:", socket?.id);
+      console.log("✅ Connected to socket server:", socket!.id);
     });
 
     socket.on("disconnect", () => {
       console.log("❌ Disconnected from socket server");
     });
   }
+
   return socket;
 };
 

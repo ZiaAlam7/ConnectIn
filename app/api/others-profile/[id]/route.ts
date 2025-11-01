@@ -3,14 +3,11 @@ import connectToDatabase from "@/lib/mongodb";
 import UserDetail from "@/models/UserDetail.model";
 
 // GET /api/others-profile/[id]
-export async function GET(
-  request: Request,
-  context: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: any) {
   try {
     await connectToDatabase();
 
-    const id = context.params.id;
+    const { id } = params;
     const user = await UserDetail.findOne({ user_id: id }).lean();
 
     if (!user) {
