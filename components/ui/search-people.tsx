@@ -19,9 +19,10 @@ export default function SearchPeople() {
     const fetchUser = async () => {
       try {
         const res = await axios.get("/api/fetch-users");
-        // console.log(res.data.allUsers)
         const data: any = res.data.allUsers;
         setUsers(data);
+       
+
       } catch (error) {
         console.error("Failed to fetch post post_context:", error);
       }
@@ -30,12 +31,16 @@ export default function SearchPeople() {
     fetchUser();
   }, []);
 
+   console.log("These are the all users:", user)
+ 
   // Filter options based on search input
   const filteredUsers = (users ?? []).filter(
-    (user1: any) =>
-      user1.full_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      user1.user_id !== user?.user_id
+    (allUser: any) =>
+      allUser.full_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      allUser.user_id !== user?.user_id
   );
+
+    console.log("These one filteredUsers:", filteredUsers)
 
   // Close dropdown when clicking outside
   useEffect(() => {

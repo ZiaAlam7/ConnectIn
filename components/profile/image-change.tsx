@@ -7,11 +7,10 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Pencil, Trash2, X } from "lucide-react";
-import { IKUpload } from "imagekitio-next";
+import { Pencil, Trash2, X, Loader2 } from "lucide-react";
+import { IKUpload, IKImage } from "imagekitio-next";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { IKImage } from "imagekitio-next";
 
 interface ProfileImageOverlayProps {
   isOpen: boolean;
@@ -31,14 +30,15 @@ export function ProfileImageOverlay({
   onDeleteImage,
 }: ProfileImageOverlayProps) {
   const uploadRef = useRef<HTMLInputElement | null>(null);
-  
+  const [isUploading, setIsUploading] = useState(false); // ✅ Spinner control
 
   const onError = (err: any) => {
     console.log("Error", err);
+    setIsUploading(false);
   };
 
   const onSuccess = async (res: any) => {
-    console.log("Success", res);
+    console.log("Upload Success:", res);
 
     const values = res.url;
     const target = imageType;
@@ -48,21 +48,28 @@ export function ProfileImageOverlay({
         "/api/user-update",
         { target, values },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
         }
       );
       console.log("Image Changed:", response.data);
+      // Wait briefly to show spinner before reload
+      setTimeout(() => {
+        onChangeImage();
+      }, 500);
     } catch (error: any) {
       console.error(
         "Error while changing image:",
         error.response?.data || error.message
       );
+      setIsUploading(false);
     }
-    onChangeImage();
   };
 
+  // ✅ Show spinner immediately when upload starts
+  const onUploadStart = () => {
+    console.log("Upload started...");
+    setIsUploading(true);
+  };
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -78,16 +85,28 @@ export function ProfileImageOverlay({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={onClose}
     >
-      <Card className="w-full max-w-md"
-       onClick={(e) => e.stopPropagation()}
+      <Card
+        className="w-full max-w-md relative"
+        onClick={(e) => e.stopPropagation()}
       >
+        {/* ✅ Spinner overlay */}
+        {isUploading && (
+          <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center z-50">
+            <Loader2 className="w-8 h-8 text-[var(--mainGreen)] animate-spin" />
+            <p className="mt-2 text-gray-700 font-medium">Uploading image...</p>
+          </div>
+        )}
+
         <CardHeader className="flex flex-row items-center justify-between p-4 space-y-0">
-          <h3 className="text-lg font-medium">{imageType === "profile_image" ? "Profile Image" : "Cover Image"}</h3>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <h3 className="text-lg font-medium">
+            {imageType === "profile_image" ? "Profile Image" : "Cover Image"}
+          </h3>
+          <Button variant="ghost" size="icon" onClick={onClose} disabled={isUploading}>
             <X className="w-4 h-4" />
             <span className="sr-only">Close</span>
           </Button>
         </CardHeader>
+
         <CardContent className="flex items-center justify-center p-6">
           {imageType === "profile_image" && (
             <div className="relative w-40 h-40 overflow-hidden rounded-full">
@@ -112,18 +131,30 @@ export function ProfileImageOverlay({
             </div>
           )}
         </CardContent>
+
         <CardFooter className="flex justify-between p-4">
-          <Button onClick={() => uploadRef.current?.click()}>
+          <Button
+            onClick={() => uploadRef.current?.click()}
+            disabled={isUploading}
+          >
             <Pencil className="w-4 h-4 mr-2" />
             Change Image
           </Button>
 
+          {/* ✅ Added onUploadStart */}
           <IKUpload
             ref={uploadRef}
-            className="hidden" // Hides the default UI
+            className="hidden"
             onSuccess={onSuccess}
+            onError={onError}
+            onUploadStart={onUploadStart}
           />
-          <Button variant="destructive" onClick={onDeleteImage}>
+
+          <Button
+            variant="destructive"
+            onClick={onDeleteImage}
+            disabled={isUploading}
+          >
             <Trash2 className="w-4 h-4 mr-2" />
             Delete
           </Button>
