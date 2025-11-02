@@ -1,19 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  Bell,
-  Briefcase,
-  Home,
-  MessageSquare,
-  Search,
-  Users,
-} from "lucide-react";
-import axios from "axios";
-import Image from "next/image";
-import connectinLogo from "../../public/ConnectIn icon.jpg";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, MessageSquare, Users } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { IKImage } from "imagekitio-next";
+import { useUser } from "@/context/UserContext";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,14 +17,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useUser } from "@/context/UserContext";
-import { IKImage } from "imagekitio-next";
-import { signOut } from "next-auth/react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import SearchPeople from "@/components/ui/search-people";
-
 
 type NavItem = {
   title: string;
@@ -39,42 +32,28 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  {
-    title: "Home",
-    href: "/home",
-    icon: Home,
-  },
-  {
-    title: "My Network",
-    href: "/mynetwork",
-    icon: Users,
-  },
-  {
-    title: "Messaging",
-    href: "/messaging",
-    icon: MessageSquare,
-  },
-  
+  { title: "Home", href: "/home", icon: Home },
+  { title: "My Network", href: "/mynetwork", icon: Users },
+  { title: "Messaging", href: "/messaging", icon: MessageSquare },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
-  
-
+  const router = useRouter();
   const { user }: any = useUser();
+
   const userProfileImage = user?.profile_image;
-  const job = user?.work[0]?.job_title;
+  const job = user?.work?.[0]?.job_title;
   const fullName = user?.full_name;
 
   const handleLogout = () => {
-    signOut({
-      callbackUrl: "/login", // Redirect to home or login page after logout
-    });
+    signOut({ callbackUrl: "/login" });
   };
 
   return (
     <header className="sticky top-0 z-50 w-full mx-auto border-b bg-background p-1">
-      <div className="container flex h-14 items-center px-4 sm:px-6 max-w-[75%] mx-auto ">
+      <div className="container flex h-14 items-center px-4 sm:px-6 max-w-[75%] mx-auto">
+        {/* Left: Logo + Search */}
         <div className="flex items-center gap-3 md:gap-5 sm:w-[30%] w-[95%]">
           <Link href="/home" className="flex items-center">
             <img
@@ -82,17 +61,17 @@ export function Navbar() {
               alt="ConnectIn Logo"
               className="h-8 w-8 rounded"
             />
-            {/* <Image src={connectinLogo} alt="ConnectIn Logo" width={8} height={8} /> */}
             <span className="sr-only">ConnectIn</span>
           </Link>
 
-          <div className= "w-full">
-              <SearchPeople/>
-            
+          <div className="w-full">
+            <SearchPeople />
           </div>
         </div>
 
+        {/* Right: Nav + User */}
         <div className="flex flex-1 items-center justify-end space-x-1">
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
@@ -111,7 +90,7 @@ export function Navbar() {
             ))}
           </nav>
 
-          {/* Mobile navigation */}
+          {/* Mobile nav (hamburger menu) */}
           <div className="flex md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -135,11 +114,15 @@ export function Navbar() {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
+
               <SheetContent side="right">
+                <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+
                 <div className="grid gap-6 py-6">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{fullName}</p>
                   </div>
+
                   <nav className="grid gap-3">
                     {navItems.map((item) => (
                       <Link
@@ -155,6 +138,7 @@ export function Navbar() {
                       </Link>
                     ))}
                   </nav>
+
                   <div className="border-t pt-4">
                     <Button
                       variant="outline"
@@ -169,22 +153,27 @@ export function Navbar() {
             </Sheet>
           </div>
 
-          {/* User dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <IKImage
-                  src={userProfileImage}
-                  alt="Profile Picture"
-                  className="rounded-full object-cover"
-                  width={32}
-                  height={32}
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <div className="flex items-center gap-2 p-2">
-                <div>
+          {/* 👇 MOBILE PROFILE BUTTON */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full md:hidden"
+            onClick={() => router.push("/profile")}
+          >
+            <IKImage
+              src={userProfileImage}
+              alt="Profile Picture"
+              className="rounded-full object-cover"
+              width={32}
+              height={32}
+            />
+          </Button>
+
+          {/* 👇 DESKTOP DROPDOWN MENU */}
+          <div className="hidden md:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
                   <IKImage
                     src={userProfileImage}
                     alt="Profile Picture"
@@ -192,22 +181,37 @@ export function Navbar() {
                     width={32}
                     height={32}
                   />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="flex items-center gap-2 p-2">
+                  <div>
+                    <IKImage
+                      src={userProfileImage}
+                      alt="Profile Picture"
+                      className="rounded-full object-cover"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{fullName}</p>
+                    <p className="text-xs text-muted-foreground">{job}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{fullName}</p>
-                  <p className="text-xs text-muted-foreground">{job}</p>
-                </div>
-              </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">View Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                Sign Out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">View Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </header>

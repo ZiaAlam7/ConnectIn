@@ -40,13 +40,22 @@ export default function Dropdown({ options, label, onSelect, local }: DropdownPr
   return (
     <div className="relative w-full" ref={dropdownRef}>
       <label>{label}</label>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-2 text-nowrap bg-white border rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-      >
-        {selected ? selected : local || `Select ${label}`}
-      </button>
+     <button
+  type="button"
+  onClick={() => setIsOpen(!isOpen)}
+  className="w-full h-10 p-2 bg-white border rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-primaryGreen overflow-hidden text-ellipsis whitespace-nowrap text-left"
+>
+  {selected ? (
+    <span className="truncate">{selected}</span>
+  ) : (
+    <span className="truncate">
+      {local}{" "}
+      <span className="hidden sm:inline">{label ? `Select ${label}` : ""}</span>
+    </span>
+  )}
+</button>
+
+
       {isOpen && (
         <div className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-md max-h-48 overflow-y-auto z-[100]">
           <input

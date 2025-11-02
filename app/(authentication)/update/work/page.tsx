@@ -133,7 +133,7 @@ const Work = () => {
         },
       });
       console.log("User details saved successfully:", response.data);
-      router.push(`/home`);
+      router.push(`/profile`);
     } catch (error: any) {
       console.error(
         "Error saving user details:",
@@ -159,7 +159,7 @@ const Work = () => {
           },
         });
         console.log("User Skipped:", response.data);
-        router.push(`/home`);
+        router.push(`/profile`);
       } catch (error: any) {
         console.error(
           "Error while skipping:",
@@ -168,7 +168,7 @@ const Work = () => {
       }
     }
     else{
-      router.push(`/home`);
+      router.push(`/profile`);
     }
   };
 
@@ -186,8 +186,8 @@ const Work = () => {
 
   return (
     <>
-      <div className="bg-[#F4F2F0] h-auto flex flex-col items-center pt-[1rem] pb-16">
-        <h1 className="text-4xl mb-7 text-black font-sans font-thin">
+      <div className="bg-[#F4F2F0] h-[92vh] max-h-auto flex flex-col items-center pt-[1rem] pb-16">
+        <h1 className="sm:text-4xl text-2xl mb-7 text-black font-sans font-thin text-center">
           Add a recent company you worked at
         </h1>
         <div className="w-[80%] md:w-[40%]  p-6">

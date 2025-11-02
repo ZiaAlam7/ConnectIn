@@ -101,14 +101,27 @@ export default function ChatApp() {
         ]);
 
         setMessages(res1.data.allMessages);
-        setConversations(res2.data.allConversation);
-        setActiveChat(res2.data.allConversation[0]);
+
+        const allConversations = res2.data.allConversation || [];
+        const userConversations = allConversations.filter((chat: IChat) =>
+          chat.participants?.some((p: any) => p._id === user?._id)
+        );
+
+        setConversations(userConversations);
+
+        // ✅ Only set an active chat if one exists
+        if (userConversations.length > 0) {
+          setActiveChat(userConversations[0]);
+        } else {
+          setActiveChat(null);
+        }
       } catch (err) {
         console.error("Failed to fetch data:", err);
       }
     };
-    fetchData();
-  }, []);
+
+    if (user?._id) fetchData();
+  }, [user?._id]);
 
   useEffect(() => {
     if (!user?._id) return;
@@ -182,73 +195,79 @@ export default function ChatApp() {
         </div>
 
         <div className="flex-1 p-2">
-          {conversations?.map((chat: IChat) => (
-            <div
-              key={chat._id}
-              className={`p-3 my-1 cursor-pointer border-b border-white hover:bg-gray-200 ${
-                activeChat?._id === chat._id ? "bg-gray-100" : ""
-              }`}
-              onClick={() => setActiveChat(chat)}
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-                    <IKImage
-                      src={
-                        chat.participants[0]?.full_name !== user?.full_name
-                          ? chat.participants[0]?.profile_image
-                          : chat.participants[1]?.profile_image
-                      }
-                      alt="Profile Picture"
-                      className="object-cover w-full h-full rounded-full"
-                      width={1200}
-                      height={1200}
-                    />
+          {conversations?.length > 0 ? (
+            conversations?.map((chat: IChat) => (
+              <div
+                key={chat._id}
+                className={`p-3 my-1 cursor-pointer border-b border-white hover:bg-gray-200 ${
+                  activeChat?._id === chat._id ? "bg-gray-100" : ""
+                }`}
+                onClick={() => setActiveChat(chat)}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                      <IKImage
+                        src={
+                          chat.participants[0]?.full_name !== user?.full_name
+                            ? chat.participants[0]?.profile_image
+                            : chat.participants[1]?.profile_image
+                        }
+                        alt="Profile Picture"
+                        className="object-cover w-full h-full rounded-full"
+                        width={1200}
+                        height={1200}
+                      />
+                    </div>
+                    <span className="font-medium text-sm sm:text-base">
+                      {chat.participants[0]?.full_name !== user?.full_name
+                        ? chat.participants[0]?.full_name
+                        : chat.participants[1]?.full_name}
+                    </span>
                   </div>
-                  <span className="font-medium text-sm sm:text-base">
-                    {chat.participants[0]?.full_name !== user?.full_name
-                      ? chat.participants[0]?.full_name
-                      : chat.participants[1]?.full_name}
-                  </span>
-                </div>
 
-                <div className="flex gap-1 items-center">
-                  <span className="text-xs text-gray-500 hidden sm:inline">
-                    {new Date(chat?.createdAt).toLocaleDateString()}
-                  </span>
+                  <div className="flex gap-1 items-center">
+                    <span className="text-xs text-gray-500 hidden sm:inline">
+                      {new Date(chat?.createdAt).toLocaleDateString()}
+                    </span>
 
-                  <div className="relative menu-container" ref={menuRef}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTargetChatId(chat._id);
-                      }}
-                      className="p-1 hover:bg-gray-100 rounded-full"
-                    >
-                      <MoreVertical className="w-5 h-5 text-gray-600" />
-                    </button>
-
-                    {chat._id === targetChatId && (
-                      <div
-                        className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10"
-                        onClick={(e) => e.stopPropagation()}
+                    <div className="relative menu-container" ref={menuRef}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTargetChatId(chat._id);
+                        }}
+                        className="p-1 hover:bg-gray-100 rounded-full"
                       >
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                          onClick={() => handleDeleteChat(chat._id)}
+                        <MoreVertical className="w-5 h-5 text-gray-600" />
+                      </button>
+
+                      {chat._id === targetChatId && (
+                        <div
+                          className="absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                          <button
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                            onClick={() => handleDeleteChat(chat._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+                <p className="text-sm text-gray-600 truncate ml-10">
+                  {chat?.lastMessage?.content || "No messages yet"}
+                </p>
               </div>
-              <p className="text-sm text-gray-600 truncate ml-10">
-                {chat?.lastMessage?.content || "No messages yet"}
-              </p>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500 text-center mt-10">
+              No conversations found.
+            </p>
+          )}
         </div>
       </div>
 

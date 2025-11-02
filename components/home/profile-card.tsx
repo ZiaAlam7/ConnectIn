@@ -6,24 +6,6 @@ import { IKImage } from "imagekitio-next";
 import { useSession } from "next-auth/react";
 
 
-// interface ProfileCardProps {
-//   name: string;
-//   title: string;
-//   location: string;
-//   university: string;
-//   profileImage: string;
-//   bannerImage: string;
-// }
-
-// {
-//     name,
-//     title,
-//     location,
-//     university,
-//     profileImage,
-//     bannerImage,
-//   }: ProfileCardProps
-
 export default function ProfileCard() {
   const { data: session, status } = useSession();
   const email = session?.user.email;
@@ -35,7 +17,7 @@ export default function ProfileCard() {
   const country = user?.address?.country;
   const city = user?.address?.city;
   const education = user?.education[0];
-   const headline = `${user?.work[0].job_title} at ${user?.work[0].company_name}`;
+   const headline = `${user?.work[0]?.job_title} at ${user?.work[0]?.company_name}`;
 
   return (
     <div className="w-[15rem] h-fit bg-white rounded-xl shadow-md overflow-hidden border ">
@@ -61,7 +43,7 @@ export default function ProfileCard() {
       </div>
       <div className="pt-12 px-4 pb-4  flex flex-col ">
         <h2 className="font-semibold text-lg text-gray-900">{fullName}</h2>
-        <p className="text-sm text-gray-700">{headline}</p>
+        {user?.work[0]?.job_title && <p className="text-sm text-gray-700">{headline}</p>}
         <div className="flex gap-2">
           {city && <p className="text-xs text-gray-500 mt-1">{city},</p>}
           <p className="text-xs text-gray-500 mt-1">{country}</p>

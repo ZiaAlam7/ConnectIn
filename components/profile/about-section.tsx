@@ -65,8 +65,8 @@ export default function AboutSection({ other_user }: Other_User_Props) {
         <div>
           {isOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-              <div className="bg-white p-6 rounded-2xl shadow-xl sm:w-full w-[90vw] max-w-xl z-50">
-                <h2 className="text-xl font-semibold mb-4">Edit Text</h2>
+              <div className="bg-white p-6 rounded-2xl shadow-xl sm:w-full w-[90vw]  max-w-xl z-50">
+                <h2 className="text-xl font-semibold mb-4">Add About</h2>
                 <textarea
                   className="w-full resize-none outline-[var(--mainGreen)] h-36 p-2 border rounded mb-4"
                   value={tempText}

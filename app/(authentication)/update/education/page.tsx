@@ -340,16 +340,15 @@ const EducationPage = () => {
       removeUserDetail.education = [];
       localStorage.setItem("userDetail", JSON.stringify(removeUserDetail));
       router.push(`/update/work`);
-    }
-    else{
+    } else {
       router.push(`/update/work`);
     }
   };
 
   return (
     <>
-      <div className="bg-[#F4F2F0] h-[92vh] flex flex-col items-center pt-[1rem]">
-        <h1 className="text-4xl mb-8 text-black font-sans font-thin">
+      <div className="bg-[#F4F2F0] min-h-[92vh] max-h-auto flex flex-col items-center pt-[1rem]">
+        <h1 className="sm:text-4xl text-2xl mb-8 text-black font-sans font-thin text-center">
           Your profile helps you discover new people and opportunities
         </h1>
         <div className="w-[80%] md:w-[40%]  p-6">
@@ -364,7 +363,7 @@ const EducationPage = () => {
                 }
               />
             </div>
-            <div className="grid grid-cols-2 gap-8 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-5">
               <div>
                 <Dropdown
                   options={degreeTypes}
@@ -426,6 +425,7 @@ const EducationPage = () => {
                 />
               </div>
             </div>
+
             <div className="flex flex-col items-center">
               <button
                 type="button"

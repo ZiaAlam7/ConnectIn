@@ -13,7 +13,7 @@ import LanguagesSection from "@/components/profile/languages-section";
 import { Container } from "@/components/layout/container";
 
 export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); // ✅ unwrap the Promise with React.use()
+  const { id } = use(params);
 
   const [user, setUser] = useState<any>(null);
 
@@ -34,7 +34,7 @@ export default function ProfilePage({ params }: { params: Promise<{ id: string }
   return (
     user !== null && (<Container>
       <div className="pt-6">
-        <div className="space-y-6 w-[75%] mx-auto">
+        <div className="space-y-6 sm:w-[75%] w-[100%] mx-auto">
           <ProfileHeader other_user={user}/>
           <AboutSection other_user={user}/>
           <ActivitySection other_user={user}/>

@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ArrowRight, ThumbsUp, Heart } from "lucide-react";
+import { ArrowRight, ThumbsUp } from "lucide-react";
 import { IKImage } from "imagekitio-next";
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
 import { usePost } from "@/context/PostContext";
 import { useUser } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 interface Other_User_Props {
   other_user?: any;
@@ -16,21 +16,26 @@ interface Other_User_Props {
 
 export default function ActivitySection({ other_user }: Other_User_Props) {
   const router = useRouter();
+  const params = useParams(); // ✅ read the dynamic route params
   const { post }: any = usePost();
   const { user: contextUser } = useUser();
 
   const [user, setUser] = useState<any>(other_user ?? contextUser ?? null);
   const [activeTab, setActiveTab] = useState<"posts" | "comments" | "liked">("posts");
 
+  // ✅ Extract ID from the URL if it exists
+  const routeId = params?.id || params?.userId || null;
+
   useEffect(() => {
     if (other_user) setUser(other_user);
     else if (contextUser) setUser(contextUser);
   }, [other_user, contextUser]);
 
-  const userId = user?._id;
+  // ✅ Use route param if user doesn't exist yet
+  const userId = user?._id || routeId;
+
   const fullName = `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
 
-  // ✅ Safer filtering logic
   const filteredPosts = useMemo(() => {
     return (post ?? []).filter((item: any) => item.userId?._id === userId);
   }, [post, userId]);
@@ -53,7 +58,6 @@ export default function ActivitySection({ other_user }: Other_User_Props) {
     );
   }, [post, user?.liked]);
 
-  // ✅ Reusable render function for activity items
   const renderPostList = (posts: any[], emptyText: string) => {
     if (!posts.length)
       return <div className="py-8 text-center text-muted-foreground">{emptyText}</div>;
@@ -65,7 +69,13 @@ export default function ActivitySection({ other_user }: Other_User_Props) {
             <li
               className="cursor-pointer"
               key={item._id || index}
-              onClick={() => router.push("/profile/posts")}
+              onClick={() =>
+                router.push(
+                  other_user || routeId
+                    ? `/profile/${userId}/posts`
+                    : "/profile/posts"
+                )
+              }
             >
               <div className="border-b py-4">
                 <div className="flex items-center gap-1 mb-2">
@@ -112,7 +122,15 @@ export default function ActivitySection({ other_user }: Other_User_Props) {
 
         <div className="flex justify-center">
           <Button variant="ghost" className="flex items-center gap-1">
-            <Link href="/profile/posts">Show all posts</Link>
+            <Link
+              href={
+                other_user || routeId
+                  ? `/profile/${userId}/posts`
+                  : "/profile/posts"
+              }
+            >
+              Show all posts
+            </Link>
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
@@ -147,8 +165,7 @@ export default function ActivitySection({ other_user }: Other_User_Props) {
           </div>
 
           {/* Activity Content */}
-          {activeTab === "posts" &&
-            renderPostList(filteredPosts, "No posts yet")}
+          {activeTab === "posts" && renderPostList(filteredPosts, "No posts yet")}
           {activeTab === "comments" &&
             renderPostList(filteredCommentedPosts, "No comments yet")}
           {activeTab === "liked" &&
